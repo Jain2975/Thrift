@@ -1,0 +1,37 @@
+
+# # Keep environment variables out of version control
+# .env
+
+# /src/generated/prisma
+
+# /generated/prisma
+# /generated
+# /prisma/migrations
+
+# Prisma / Dependencies
+**/node_modules/
+/.env
+*.log
+
+# Prisma generated client (CRITICAL - contains platform-specific binaries)
+generated/
+
+# Prisma migrations (KEEP these - version control your DB changes)
+!prisma/migrations/
+
+# Build outputs
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
