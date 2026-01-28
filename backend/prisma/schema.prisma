@@ -14,16 +14,32 @@ datasource db {
   // url      = env("DATABASE_URL")  
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  delivered
+  cancelled
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
   name      String?
+  password  String
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   orders    Order[]
+  cart      Cart?
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          String      @id @default(uuid())
   name        String
   description String?
   price       Decimal     @db.Decimal(10, 2)
@@ -32,24 +48,45 @@ model Product {
   category    String?
   createdAt   DateTime    @default(now())
   orderItems  OrderItem[]
+  cartItems   CartItem[]
+
+  @@index([category])
+  @@index([price])
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
+  id        String      @id @default(uuid())
   total     Decimal     @db.Decimal(10, 2)
   status    String      @default("pending")
-  userId    Int
+  userId    String
   user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
   createdAt DateTime    @default(now())
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
+  id        String  @id @default(uuid())
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
-  productId Int
+  productId String
   product   Product @relation(fields: [productId], references: [id])
-  orderId   Int
+  orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id])
 }

@@ -14,12 +14,12 @@ export const createUser = async (email: string, name?: string) => {
 };
 
 export const updateUser = async (
-  email: string,
+  id: string,
   updates: { name?: string; email?: string }
 ) => {
   try {
     return await prisma.user.update({
-      where: { email },
+      where: { id },
       data: updates,
     });
   } catch (err) {
