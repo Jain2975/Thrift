@@ -1,11 +1,15 @@
 import express, { Router } from "express";
 
-import { registerUser,editUser,removeUser } from "../controllers/user.controller.js";
+import {
+  registerUser,
+  editUser,
+  removeUser,
+} from "../controllers/user.controller.ts";
 
-const router=express.Router();
+const router = express.Router();
 
-router.post("/register",registerUser);
-router.patch("/:id",editUser);
-router.delete("/:id",removeUser);
+router.post("/register", registerUser);
+router.patch("/:id", editUser);
+router.delete("/:id", removeUser);
 
 export default router;

@@ -1,19 +1,18 @@
-import { Request,Response } from "express";
-import { createUser,updateUser,deleteUser } from "../services/useServices.js";
+import { type Request, type Response } from "express";
+import { createUser, updateUser, deleteUser } from "../services/useServices.ts";
 
-export const registerUser= async(req: Request,res:Response)=>{
-    try{
-        const {email,name}=req.body;
-        const user =  await createUser(email,name);
+export const registerUser = async (req: Request, res: Response) => {
+  try {
+    const { email, name, password } = req.body;
+    const user = await createUser(email, password, name);
 
-        res.status(201).json(user);
-
-    }catch(err){
-        res.status(400).json({error: "Error creating user"});
-    }
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ error: "Error creating user" });
+  }
 };
 
-export const editUser = async (req: Request<{id:string}>,res:Response) => {
+export const editUser = async (req: Request<{ id: string }>, res: Response) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -24,10 +23,13 @@ export const editUser = async (req: Request<{id:string}>,res:Response) => {
   }
 };
 
-export const removeUser = async (req: Request<{email: string}>,res:Response) => {
+export const removeUser = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
   try {
-    const { email } = req.params;
-    await deleteUser(email);
+    const { id } = req.params;
+    await deleteUser(id);
     res.json({ message: "User deleted" });
   } catch (err) {
     res.status(400).json({ error: "Error deleting user" });

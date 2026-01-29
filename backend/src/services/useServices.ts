@@ -1,9 +1,14 @@
-import { prisma } from "../db/prisma.js";
-
-export const createUser = async (email: string, name?: string) => {
+import { prisma } from "../db/prisma.ts";
+import bcrypt from "bcryptjs";
+export const createUser = async (
+  email: string,
+  password: string,
+  name?: string,
+) => {
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     return await prisma.user.create({
-      data: { email, name },
+      data: { email, name, password: hashedPassword },
     });
   } catch (err: any) {
     if (err.code === "P2002") {
@@ -15,7 +20,7 @@ export const createUser = async (email: string, name?: string) => {
 
 export const updateUser = async (
   id: string,
-  updates: { name?: string; email?: string }
+  updates: { name?: string; email?: string },
 ) => {
   try {
     return await prisma.user.update({
@@ -28,10 +33,10 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (email: string) => {
+export const deleteUser = async (id: string) => {
   try {
     return await prisma.user.delete({
-      where: { email },
+      where: { id },
     });
   } catch (err) {
     console.error(err);

@@ -1,75 +1,170 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUserAPI } from "../services/userServices";
 
-
 function Register() {
-const [name, setName] = useState("");
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [error, setError] = useState<string | null>(null);
-const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate();
 
-const handleRegister = async (e: React.FormEvent) => {
-e.preventDefault();
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
+    try {
+      await registerUserAPI(name, email, password);
+      navigate("/login");
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Registration failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-try {
-await registerUserAPI(name, email, password);
-navigate("/login");
-} catch (err: any) {
-setError(err.response?.data?.error || "Registration failed");
+  return (
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 px-4 overflow-hidden">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+
+        {/* Form Card */}
+        <div className="bg-white shadow-2xl rounded-3xl p-10 lg:p-12">
+          <form onSubmit={handleRegister} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+              </div>
+            )}
+
+            {/* Name Field */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-semibold text-gray-700 mb-3"
+              >
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="Enter your full name"
+                className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-3 focus:ring-green-500/20 focus:border-green-500 transition-all duration-300 bg-gradient-to-r from-gray-50 to-gray-100 hover:border-gray-300 shadow-sm"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-semibold text-gray-700 mb-3"
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email address"
+                className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-3 focus:ring-green-500/20 focus:border-green-500 transition-all duration-300 bg-gradient-to-r from-gray-50 to-gray-100 hover:border-gray-300 shadow-sm"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-gray-700 mb-3"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Create a strong password"
+                className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-3 focus:ring-green-500/20 focus:border-green-500 transition-all duration-300 bg-gradient-to-r from-gray-50 to-gray-100 hover:border-gray-300 shadow-sm"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Register Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-2xl font-semibold text-lg hover:from-green-700 hover:to-green-800 focus:ring-4 focus:ring-green-500/30 focus:ring-offset-2 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+            >
+              {isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      className="opacity-25"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Register</span>
+                  <svg
+                    className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-10 pt-8 border-t-2 border-gray-100 text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              Already have an account?
+            </p>
+            <Link
+              to="/login"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-};
-
-
-return (
-<div className="min-h-screen flex items-center justify-center bg-blue-50">
-<form onSubmit={handleRegister} className="bg-white p-8 rounded-xl shadow-lg w-96">
-<h2 className="text-2xl font-bold mb-6">Register</h2>
-
-
-{error && <p className="text-red-500 mb-3">{error}</p>}
-
-
-<input
-type="text"
-placeholder="Name"
-className="w-full border p-2 mb-4 rounded"
-value={name}
-onChange={(e) => setName(e.target.value)}
-required
-/>
-
-
-<input
-type="email"
-placeholder="Email"
-className="w-full border p-2 mb-4 rounded"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-required
-/>
-
-
-<input
-type="password"
-placeholder="Password"
-className="w-full border p-2 mb-4 rounded"
-value={password}
-onChange={(e) => setPassword(e.target.value)}
-required
-/>
-
-
-<button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-Register
-</button>
-</form>
-</div>
-);
-}
-
 
 export default Register;

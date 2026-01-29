@@ -1,35 +1,53 @@
+// import Dashboard from "./components/Dashboard";
+// import ProtectedRoute from "./ProtectedRoute";
+// import Login from "./components/Login";
+// import Register from "./components/Register";
 // import Home from "./components/Home";
 // import Header from "./components/Header";
 // import Footer from "./components/Footer";
-// function App(){
-//  return (
-//     <div>
-//         <Header />
-//         <Home />
-//         <Footer />
-//     </div>
-//  )
+// import { Route,Routes } from "react-router-dom";
+// function App() {
+//   return (
+//     <>
+//       <Header />
+
+//       <Routes>
+//         <Route path="/" element={<Home />} />
+//         <Route path="/login" element={<Login />} />
+//         <Route path="/register" element={<Register />} />
+
+//         <Route
+//           path="/dashboard"
+//           element={
+//             <ProtectedRoute>
+//               <Dashboard />
+//             </ProtectedRoute>
+//           }
+//         />
+//       </Routes>
+
+//       <Footer />
+//     </>
+//   );
 // }
 
 // export default App;
-import Dashboard from "./components/Dashboard";
-import ProtectedRoute from "./ProtectedRoute";
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import AuthLayout from "./layouts/AuthLayout";
+
+import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Home from "./components/Home";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import { Route,Routes } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
+
 function App() {
   return (
-    <>
-      <Header />
-
-      <Routes>
+    <Routes>
+      {/* Main site layout */}
+      <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
         <Route
           path="/dashboard"
           element={
@@ -38,10 +56,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
+      </Route>
 
-      <Footer />
-    </>
+      {/* Auth pages layout */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
+    </Routes>
   );
 }
 
