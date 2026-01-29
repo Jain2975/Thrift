@@ -1,3 +1,4 @@
+import { error } from "node:console";
 import { prisma } from "../db/prisma.ts";
 import bcrypt from "bcryptjs";
 export const createUser = async (
@@ -15,6 +16,21 @@ export const createUser = async (
       throw new Error("Email already exists");
     }
     throw err;
+  }
+};
+
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) throw new Error("User not found");
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error("Wrong Password");
+  } catch (err) {
+    console.error(err);
+    throw new Error("Could not Login");
   }
 };
 

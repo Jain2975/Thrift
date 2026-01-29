@@ -1,5 +1,10 @@
 import { type Request, type Response } from "express";
-import { createUser, updateUser, deleteUser } from "../services/useServices.ts";
+import {
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+} from "../services/useServices.ts";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -9,6 +14,17 @@ export const registerUser = async (req: Request, res: Response) => {
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: "Error creating user" });
+  }
+};
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const user = await loginUser(email, password);
+
+    res.json({ message: "Login successful", user });
+  } catch (err: any) {
+    res.status(401).json({ error: err.message });
   }
 };
 
