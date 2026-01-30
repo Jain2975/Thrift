@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import { loginUserAPI } from "../services/userServices";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -18,8 +17,7 @@ function Login() {
     setError(null);
 
     try {
-      const data = await loginUserAPI(email, password);
-      login(data.user);
+      await login(email, password);
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Login Failed");

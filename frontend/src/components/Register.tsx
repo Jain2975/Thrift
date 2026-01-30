@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUserAPI } from "../services/userServices";
+import { useAuth } from "../Context/AuthContext";
 
 function Register() {
   const [name, setName] = useState("");
@@ -10,14 +10,14 @@ function Register() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-
+  const { register } = useAuth();
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      await registerUserAPI(name, email, password);
+      await register(name, email, password);
       navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.error || "Registration failed");

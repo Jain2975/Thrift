@@ -6,6 +6,8 @@ import {
   loginUser,
 } from "../services/useServices.ts";
 
+import { signToken } from "../utils/jwt.ts";
+
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { email, name, password } = req.body;
@@ -22,10 +24,30 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await loginUser(email, password);
 
-    res.json({ message: "Login successful", user });
+    const token = signToken({ id: user.id, email: user.email });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, email: user.email },
+    });
   } catch (err: any) {
-    res.status(401).json({ error: err.message });
+    res.status(401).json({ message: "Invalid Credentials" });
   }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 };
 
 export const editUser = async (req: Request<{ id: string }>, res: Response) => {

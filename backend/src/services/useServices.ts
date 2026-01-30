@@ -28,6 +28,8 @@ export const loginUser = async (email: string, password: string) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Wrong Password");
+
+    return user;
   } catch (err) {
     console.error(err);
     throw new Error("Could not Login");

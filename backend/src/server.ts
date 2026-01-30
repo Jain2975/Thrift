@@ -1,9 +1,10 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-
+import cookieParser from "cookie-parser";
 //Routes
 import userRoutes from "./routes/user.routes.ts";
-import { url } from "node:inspector";
+
 const app = express();
 
 app.use(
@@ -14,6 +15,7 @@ app.use(
   }),
 );
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
