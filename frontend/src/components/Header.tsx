@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import { User, LogOut, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <header className="flex justify-between items-center px-6 py-3 bg-white/80 backdrop-blur border-b shadow-sm sticky top-0 z-50">
-
       {/* Logo */}
       <Link to="/" className="text-xl font-bold text-blue-600">
         Thrift Commerce
@@ -17,7 +17,6 @@ const Header: React.FC = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-6">
-
         {/* Cart Icon */}
         <Link to="/cart">
           <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-blue-600 cursor-pointer" />
@@ -46,7 +45,11 @@ const Header: React.FC = () => {
                 </Link>
 
                 <button
-                  onClick={logout}
+                  onClick={async () => {
+                    await logout();
+                    setOpen(false);
+                    navigate("/");
+                  }}
                   className="flex items-center gap-2 px-4 py-2 w-full hover:bg-red-100 text-red-600 text-sm"
                 >
                   <LogOut className="w-4 h-4" />

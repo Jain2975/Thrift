@@ -48,6 +48,7 @@ export const logout = async (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
+  res.json({ mesaage: "Logged Out" });
 };
 
 export const editUser = async (req: Request<{ id: string }>, res: Response) => {
