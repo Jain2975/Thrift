@@ -32,20 +32,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
   const register = async (name: string, email: string, password: string) => {
-    const res = await api.post("/users/register", { name, email, password });
+    const res = await api.post("/auth/register", { name, email, password });
     const userData = res.data;
 
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
   const login = async (email: string, password: string) => {
-    const res = await api.post("/users/login", { email, password });
+    const res = await api.post("/auth/login", { email, password });
     const userData = res.data.user;
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
   const logout = async () => {
-    await api.post("/users/logout");
+    await api.post("/auth/logout");
     setUser(null);
     localStorage.removeItem("user");
   };

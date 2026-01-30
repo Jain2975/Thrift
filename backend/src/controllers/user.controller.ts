@@ -4,7 +4,7 @@ import {
   updateUser,
   deleteUser,
   loginUser,
-} from "../services/useServices.ts";
+} from "../services/authServices.ts";
 
 import { signToken } from "../utils/jwt.ts";
 
@@ -35,7 +35,7 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({
       message: "Login successful",
-      user: { id: user.id, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err: any) {
     res.status(401).json({ message: "Invalid Credentials" });
