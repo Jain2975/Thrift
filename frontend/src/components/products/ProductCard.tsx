@@ -17,6 +17,12 @@ const ProductCard = ({ product }: { product: Product }) => {
       </p>
 
       <p className="mt-2 font-bold text-blue-600">₹{product.price}</p>
+      <button
+        // onClick={() => onAddToCart(product.id)}
+        className="mt-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        Add to Cart
+      </button>
     </div>
   );
 };

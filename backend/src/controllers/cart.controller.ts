@@ -7,7 +7,6 @@ import {
   deleteCart,
 } from "../services/cartService";
 
-// AuthRequest already extends Request with req.user
 import { AuthRequest } from "../middlewares/auth.middleware";
 
 // Fetch entire cart
