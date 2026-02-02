@@ -5,7 +5,7 @@ import {
   UpdateCartItem,
   DeleteCartItem,
   DeleteCart,
-} from "../controllers/cart.controller";
+} from "../controllers/cart.controller.ts";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
 
 const router = Router();

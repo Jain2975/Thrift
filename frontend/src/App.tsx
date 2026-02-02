@@ -6,7 +6,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import CartPage from "./components/CartPage";
+import CartPage from "./components/Cart/CartPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {

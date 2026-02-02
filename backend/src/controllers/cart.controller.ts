@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import {
   getCart,
   addToCart,
   updateCartItem,
   removeCartItem,
   deleteCart,
-} from "../services/cartService";
+} from "../services/cartService.ts";
 
-import { AuthRequest } from "../middlewares/auth.middleware";
+import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
 // Fetch entire cart
 export const fetchCart = async (req: AuthRequest, res: Response) => {

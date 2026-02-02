@@ -26,10 +26,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/users/me");
+        setUser(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data));
+      } catch {
+        setUser(null);
+        localStorage.removeItem("user");
+      }
+    };
+    fetchUser();
   }, []);
   const register = async (name: string, email: string, password: string) => {
     const res = await api.post("/auth/register", { name, email, password });

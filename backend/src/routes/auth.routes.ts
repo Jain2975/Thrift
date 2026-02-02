@@ -6,10 +6,12 @@ import {
   removeUser,
   login,
   logout,
+  getMe,
 } from "../controllers/user.controller.ts";
 
+import { requireAuth } from "../middlewares/auth.middleware.ts";
 const router = express.Router();
-
+router.get("/me", requireAuth, getMe);
 router.post("/register", registerUser);
 router.post("/login", login);
 router.post("/logout", logout);

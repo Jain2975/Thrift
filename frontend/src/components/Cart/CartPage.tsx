@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCart, type Cart } from "../services/cartServices.ts";
+import { getCart, type Cart } from "../../services/cartServices.ts";
+import { type Product } from "../../services/productServices.ts";
 
 const CartPage = () => {
   const [cart, setCart] = useState<Cart | null>(null);

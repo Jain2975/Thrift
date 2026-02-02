@@ -5,9 +5,17 @@ import {
   deleteUser,
   loginUser,
 } from "../services/authServices.ts";
-
+import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 import { signToken } from "../utils/jwt.ts";
+export const getMe = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id, email, name } = req.user;
 
+    res.status(200).json({ id, email, name });
+  } catch (err) {
+    res.status(401).json({ message: "Not authenticated" });
+  }
+};
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { email, name, password } = req.body;

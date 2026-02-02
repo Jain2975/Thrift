@@ -1,6 +1,15 @@
 import { type Product } from "../../services/productServices";
+import { AddItemToCart } from "../../services/cartServices";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const handleAddToCart = async () => {
+    try {
+      await AddItemToCart(product.id, 1);
+      console.log("Added Product To Card");
+    } catch (err) {
+      console.error("Failed To Add to Cart", err);
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition">
       {product.imageUrl && (
@@ -18,7 +27,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
       <p className="mt-2 font-bold text-blue-600">₹{product.price}</p>
       <button
-        // onClick={() => onAddToCart(product.id)}
+        onClick={handleAddToCart}
         className="mt-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
       >
         Add to Cart
