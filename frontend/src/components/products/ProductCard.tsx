@@ -1,11 +1,13 @@
 import { type Product } from "../../services/productServices";
 import { AddItemToCart } from "../../services/cartServices";
+import { toast } from "react-toastify";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const handleAddToCart = async () => {
     try {
       await AddItemToCart(product.id, 1);
       console.log("Added Product To Card");
+      toast.success("Item Added to Cart");
     } catch (err) {
       console.error("Failed To Add to Cart", err);
     }
