@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import { User, LogOut, ShoppingCart } from "lucide-react";
+import { User, LogOut, ShoppingCart, LayoutDashboardIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +17,9 @@ const Header: React.FC = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-6">
+        <Link to="/dashboard">
+          <LayoutDashboardIcon className="w-6 h-6  text-gray-700 hover:text-blue-600 cursor-pointer"></LayoutDashboardIcon>
+        </Link>
         {/* Cart Icon */}
         <Link to="/cart">
           <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-blue-600 cursor-pointer" />

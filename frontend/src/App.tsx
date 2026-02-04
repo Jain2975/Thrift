@@ -8,6 +8,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import CartPage from "./components/Cart/CartPage";
 import ProtectedRoute from "./ProtectedRoute";
+import UserProfile from "./components/Profile/UserProfile";
 
 function App() {
   return (
@@ -34,7 +35,14 @@ function App() {
           }
         />
       </Route>
-
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        }
+      ></Route>
       {/* Auth pages layout */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />

@@ -36,7 +36,7 @@ const CartPage = () => {
   const addhandleUpdateCartItem = async (itemId: string, quantity: number) => {
     try {
       const updatedItem = await UpdateCartItem(itemId, quantity);
-
+      toast("Item Quantity Increased");
       setCart((prevCart) => {
         if (!prevCart) return prevCart;
 
@@ -62,7 +62,7 @@ const CartPage = () => {
         return;
       }
       const updatedItem = await UpdateCartItem(itemId, quantity);
-
+      toast("Item Quantity decreased");
       setCart((prevCart) => {
         if (!prevCart) return prevCart;
 
