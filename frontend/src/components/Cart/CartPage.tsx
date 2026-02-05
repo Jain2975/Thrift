@@ -52,6 +52,7 @@ const CartPage = () => {
 
       console.log("Item Updated successfully in Cart");
     } catch (error) {
+      toast.error("Error updating item quantity");
       console.error("Error updating cart item", error);
     }
   };
@@ -84,7 +85,7 @@ const CartPage = () => {
   const handleDeleteCartItem = async (itemId: string) => {
     try {
       await DeleteCartItem(itemId);
-
+      toast.error("Item deleted successfully");
       setCart((prev) => {
         if (!prev) return prev;
 

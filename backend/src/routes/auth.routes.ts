@@ -7,7 +7,7 @@ import {
   login,
   logout,
   getMe,
-} from "../controllers/user.controller.ts";
+} from "../controllers/auth.controller.ts";
 
 import { requireAuth } from "../middlewares/auth.middleware.ts";
 const router = express.Router();
