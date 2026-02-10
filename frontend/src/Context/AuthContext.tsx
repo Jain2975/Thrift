@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/users/me");
+        const res = await api.get("/auth/me");
         setUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
       } catch {
