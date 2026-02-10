@@ -30,7 +30,9 @@ const CartPage = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <p className="text-center mt-10 text-gray-500">Your cart is empty</p>
+      <div className="flex items-center justify-center min-h-[65vh]">
+        <p className="text-gray-500 text-lg">Your cart is empty</p>
+      </div>
     );
   }
   const addhandleUpdateCartItem = async (itemId: string, quantity: number) => {

@@ -17,6 +17,7 @@ datasource db {
 enum Role {
   USER
   ADMIN
+  SELLER
 }
 
 enum OrderStatus {
@@ -34,6 +35,8 @@ model User {
   password  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
+
+  products  Product[]   
   orders    Order[]
   cart      Cart?
 }
@@ -47,17 +50,22 @@ model Product {
   imageUrl    String?
   category    String?
   createdAt   DateTime    @default(now())
+
+  sellerId    String
+  seller      User        @relation(fields: [sellerId], references: [id])
+
   orderItems  OrderItem[]
   cartItems   CartItem[]
 
   @@index([category])
   @@index([price])
+  @@index([sellerId])
 }
 
 model Order {
   id        String      @id @default(uuid())
   total     Decimal     @db.Decimal(10, 2)
-  status    String      @default("pending")
+  status    OrderStatus @default(pending)
   userId    String
   user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
