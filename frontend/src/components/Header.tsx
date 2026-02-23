@@ -46,12 +46,14 @@ const Header: React.FC = () => {
                 >
                   Profile
                 </Link>
-                <Link
-                  to="/upload-product"
-                  className="block px-4 py-2 hover:bg-gray-100 text-sm"
-                >
-                  Sell Product
-                </Link>
+                {user.role === "ADMIN" && (
+                  <Link
+                    to="/upload-product"
+                    className="block px-4 py-2 hover:bg-gray-100 text-sm"
+                  >
+                    Upload Product
+                  </Link>
+                )}
 
                 <button
                   onClick={async () => {

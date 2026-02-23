@@ -9,9 +9,9 @@ import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 import { signToken } from "../utils/jwt.ts";
 export const getMe = async (req: AuthRequest, res: Response) => {
   try {
-    const { id, email, name } = req.user;
+    const { id, email, name, role } = req.user;
 
-    res.status(200).json({ id, email, name });
+    res.status(200).json({ id, email, name, role });
   } catch (err) {
     res.status(401).json({ message: "Not authenticated" });
   }
@@ -21,7 +21,25 @@ export const registerUser = async (req: Request, res: Response) => {
     const { email, name, password } = req.body;
     const user = await createUser(email, password, name);
 
-    res.status(201).json(user);
+    const token = signToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
   } catch (err) {
     res.status(400).json({ error: "Error creating user" });
   }
@@ -32,7 +50,11 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await loginUser(email, password);
 
-    const token = signToken({ id: user.id, email: user.email });
+    const token = signToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -43,7 +65,12 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({
       message: "Login successful",
-      user: { id: user.id, name: user.name, email: user.email },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err: any) {
     res.status(401).json({ message: "Invalid Credentials" });

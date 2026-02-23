@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { AuthRequest } from "./auth.middleware.ts";
+import type { AuthRequest } from "./auth.middleware.ts";
 
 export const requireAdmin = (
   req: AuthRequest,

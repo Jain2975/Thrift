@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { createProductSchema } from "../validator/product.validator";
+import { createProductSchema } from "../validator/product.validator.ts";
 
 export const validateCreateProduct = (
   req: Request,
