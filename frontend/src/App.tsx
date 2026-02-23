@@ -9,7 +9,7 @@ import Dashboard from "./components/Dashboard";
 import CartPage from "./components/Cart/CartPage";
 import ProtectedRoute from "./ProtectedRoute";
 import UserProfile from "./components/Profile/UserProfile";
-
+import CreateProduct from "./components/products/CreateProduct";
 function App() {
   return (
     <Routes>
@@ -40,6 +40,14 @@ function App() {
         element={
           <ProtectedRoute>
             <UserProfile />
+          </ProtectedRoute>
+        }
+      ></Route>
+      <Route
+        path="/upload-product"
+        element={
+          <ProtectedRoute>
+            <CreateProduct />
           </ProtectedRoute>
         }
       ></Route>

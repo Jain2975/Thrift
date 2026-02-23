@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
-import { getAllProducts } from "../services/productService.ts";
-import { get } from "node:http";
+import { createProduct, getAllProducts } from "../services/productService.ts";
+import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
 export const fetchProducts = async (req: Request, res: Response) => {
   try {
@@ -10,5 +10,21 @@ export const fetchProducts = async (req: Request, res: Response) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Server Error ! Could not get products" });
+  }
+};
+
+export const InsertProduct = async (req: AuthRequest, res: Response) => {
+  try {
+    const product = await createProduct(req.body);
+
+    return res.status(201).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create product",
+    });
   }
 };

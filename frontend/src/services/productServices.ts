@@ -4,8 +4,7 @@ export type Product = {
   id: string;
   name: string;
   description?: string;
-  price: string;
-  stock: number;
+  price: number;
   imageUrl?: string;
   category?: string;
   createdAt: string;
@@ -26,4 +25,16 @@ export const getAllProducts = async (
     params: { page, limit },
   });
   return res.data;
+};
+
+export const createProduct = async (data: {
+  name: string;
+  description?: string;
+  price: number;
+  stock?: number;
+  imageUrl?: string;
+  category?: string;
+}) => {
+  const res = await api.post("/products/create", data);
+  return res.data.product;
 };

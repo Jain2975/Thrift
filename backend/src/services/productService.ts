@@ -31,3 +31,24 @@ export const getAllProducts = async ({
     throw new Error("Could not fetch products");
   }
 };
+interface CreateProductInput {
+  name: string;
+  description?: string;
+  price: number;
+  stock?: number;
+  imageUrl?: string;
+  category?: string;
+}
+
+export const createProduct = async (data: CreateProductInput) => {
+  return prisma.product.create({
+    data: {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      stock: data.stock ?? 0,
+      imageUrl: data.imageUrl,
+      category: data.category,
+    },
+  });
+};
