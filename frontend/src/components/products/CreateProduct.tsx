@@ -27,9 +27,20 @@ const CreateProduct = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
 
+    if (e.target instanceof HTMLInputElement && e.target.type === "file") {
+      setForm({
+        ...form,
+        image: e.target.files ? e.target.files[0] : null,
+      });
+    } else {
+      setForm({
+        ...form,
+        [name]: value,
+      });
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

@@ -16,7 +16,7 @@ const ProductCard = ({ product }: { product: Product }) => {
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition">
       {product.imageUrl && (
         <img
-          src={product.imageUrl}
+          src={`http://localhost:3000${product.imageUrl}`}
           alt={product.name}
           className="h-40 w-full object-cover rounded"
         />

@@ -38,6 +38,7 @@ interface CreateProductInput {
   stock?: number;
   imageUrl?: string;
   category?: string;
+  sellerId: string;
 }
 
 export const createProduct = async (data: CreateProductInput) => {
@@ -49,6 +50,7 @@ export const createProduct = async (data: CreateProductInput) => {
       stock: data.stock ?? 0,
       imageUrl: data.imageUrl,
       category: data.category,
+      seller: { connect: { id: data.sellerId } },
     },
   });
 };

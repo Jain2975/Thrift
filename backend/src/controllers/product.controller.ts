@@ -31,6 +31,7 @@ export const InsertProduct = async (req: AuthRequest, res: Response) => {
       stock: req.body.stock ? Number(req.body.stock) : 0,
       category: req.body.category,
       imageUrl,
+      sellerId: req.user.id,
     });
 
     return res.status(201).json({
