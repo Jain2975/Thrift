@@ -15,7 +15,23 @@ export const fetchProducts = async (req: Request, res: Response) => {
 
 export const InsertProduct = async (req: AuthRequest, res: Response) => {
   try {
-    const product = await createProduct(req.body);
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image file is required",
+      });
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+
+    const product = await createProduct({
+      name: req.body.name,
+      description: req.body.description,
+      price: Number(req.body.price),
+      stock: req.body.stock ? Number(req.body.stock) : 0,
+      category: req.body.category,
+      imageUrl,
+    });
 
     return res.status(201).json({
       success: true,

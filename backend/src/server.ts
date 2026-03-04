@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes.ts";
 import productRoutes from "./routes/product.routes.ts";
 import CartRoutes from "./routes/cart.routes.ts";
 import userRoutes from "./routes/user.routes.ts";
+import path from "path";
 const app = express();
 
 app.use(
@@ -20,6 +21,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
