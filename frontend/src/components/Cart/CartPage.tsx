@@ -111,7 +111,7 @@ const CartPage = () => {
     }
   };
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto min-h-[70vh]">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Cart</h2>
       <button
         onClick={handleDeleteCart}
@@ -167,7 +167,7 @@ const CartPage = () => {
       </div>
 
       {/* Optional footer total section */}
-      <div className="mt-6 flex justify-end items-center">
+      {/* <div className="mt-6 flex justify-end items-center">
         <p className="text-lg font-semibold text-gray-800">
           Total: ₹
           {cart.items.reduce(
@@ -175,7 +175,7 @@ const CartPage = () => {
             0,
           )}
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };
