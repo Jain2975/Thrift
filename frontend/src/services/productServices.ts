@@ -26,15 +26,12 @@ export const getAllProducts = async (
   });
   return res.data;
 };
+export const createProduct = async (data: FormData) => {
+  const res = await api.post("/products/create", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-export const createProduct = async (data: {
-  name: string;
-  description?: string;
-  price: number;
-  stock?: number;
-  imageUrl?: string;
-  category?: string;
-}) => {
-  const res = await api.post("/products/create", data);
   return res.data.product;
 };

@@ -6,7 +6,7 @@ type FormData = {
   description: string;
   price: string;
   stock: string;
-  imageUrl: string;
+  image: File | null;
   category: string;
 };
 
@@ -16,7 +16,7 @@ const CreateProduct = () => {
     description: "",
     price: "",
     stock: "",
-    imageUrl: "",
+    image: null,
     category: "",
   });
 
@@ -38,24 +38,32 @@ const CreateProduct = () => {
     setLoading(true);
 
     try {
-      await createProduct({
-        ...form,
-        price: Number(form.price),
-        stock: form.stock ? Number(form.stock) : 0,
-      });
+      if (!form.image) {
+        setError("Image is required");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("price", form.price);
+      formData.append("stock", form.stock || "0");
+      formData.append("category", form.category);
+      formData.append("image", form.image);
+
+      await createProduct(formData);
 
       setSuccess(true);
 
-      // reset form
       setForm({
         name: "",
         description: "",
         price: "",
         stock: "",
-        imageUrl: "",
         category: "",
+        image: null,
       });
-    } catch (err: any) {
+    } catch (err) {
       setError("Failed to create product");
     } finally {
       setLoading(false);
@@ -94,6 +102,7 @@ const CreateProduct = () => {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
+          required
           className="w-full border p-2 rounded"
         />
 
@@ -113,14 +122,16 @@ const CreateProduct = () => {
           placeholder="Stock"
           value={form.stock}
           onChange={handleChange}
+          required
           className="w-full border p-2 rounded"
         />
 
         <input
-          name="imageUrl"
-          placeholder="Image URL"
-          value={form.imageUrl}
+          name="image"
+          type="file"
+          accept="image/*"
           onChange={handleChange}
+          required
           className="w-full border p-2 rounded"
         />
 
@@ -129,6 +140,7 @@ const CreateProduct = () => {
           placeholder="Category"
           value={form.category}
           onChange={handleChange}
+          required
           className="w-full border p-2 rounded"
         />
 
