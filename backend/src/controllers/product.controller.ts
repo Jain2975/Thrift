@@ -1,5 +1,9 @@
 import { type Request, type Response } from "express";
-import { createProduct, getAllProducts } from "../services/productService.ts";
+import {
+  createProduct,
+  getAllProducts,
+  importProductsFromZip,
+} from "../services/productService.ts";
 import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
 export const fetchProducts = async (req: Request, res: Response) => {
@@ -42,6 +46,30 @@ export const InsertProduct = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Failed to create product",
+    });
+  }
+};
+
+export const ImportZipProducts = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Zip file is required",
+      });
+    }
+
+    const result = await importProductsFromZip(req.file.path, req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to import products",
     });
   }
 };
