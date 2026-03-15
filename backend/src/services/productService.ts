@@ -4,6 +4,7 @@ import { extractZip } from "../utils/zipExtractor.ts";
 import fs from "fs";
 import csv from "csv-parser";
 import { v4 as uuidv4 } from "uuid";
+import { parseProductCsv } from "../utils/csvProductParser.ts";
 type GetProductOptions = {
   page?: number;
   limit?: number;
@@ -86,16 +87,14 @@ export const importProductsFromZip = async (
     throw new Error("images folder not found in ZIP");
   }
 
-  const rows: CsvProductRow[] = [];
-
+  let rows: CsvProductRow[];
   // Parse CSV
-  await new Promise<void>((resolve, reject) => {
-    fs.createReadStream(csvPath)
-      .pipe(csv())
-      .on("data", (row) => rows.push(row))
-      .on("end", () => resolve())
-      .on("error", reject);
-  });
+  try {
+    rows = await parseProductCsv(csvPath);
+  } catch (err) {
+    console.error("CSV parsing error:", err);
+    throw new Error("Failed to parse products.csv");
+  }
 
   let imported = 0;
   let failed = 0;
@@ -109,7 +108,7 @@ export const importProductsFromZip = async (
       const category = row.category?.trim();
       const imageName = row.image?.trim();
 
-      if (!name || !price || !imageName) {
+      if (!name || isNaN(price) || !imageName) {
         console.warn("Invalid row:", row);
         failed++;
         continue;

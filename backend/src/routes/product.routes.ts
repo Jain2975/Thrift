@@ -1,7 +1,7 @@
 import {
   fetchProducts,
   InsertProduct,
-  // importProductsZipController
+  ImportZipProducts,
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
@@ -20,6 +20,12 @@ router.post(
   InsertProduct,
 );
 
-// router.post("/import", requireAuth, requireAdmin,upload.single("zip"), importProductsZipController );
+router.post(
+  "/import",
+  requireAuth,
+  requireAdmin,
+  upload.single("zip"),
+  ImportZipProducts,
+);
 
 export default router;
