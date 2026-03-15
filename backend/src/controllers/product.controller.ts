@@ -22,7 +22,7 @@ export const InsertProduct = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = `/uploads/products/${req.file.filename}`;
 
     const product = await createProduct({
       name: req.body.name,

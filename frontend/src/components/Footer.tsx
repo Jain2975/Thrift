@@ -11,12 +11,16 @@ function Footer() {
 
         {/* Right Links */}
         <div className="flex gap-6">
-          <a href="#" className="hover:text-blue-600 transition">
+          <a
+            href="https://aj2975-port-folio.vercel.app/"
+            target="_blank"
+            className="hover:text-blue-600 transition"
+          >
             About
           </a>
-          <a href="#" className="hover:text-blue-600 transition">
+          {/* <a href="" className="hover:text-blue-600 transition">
             Contact
-          </a>
+          </a> */}
           <a
             href="https://github.com/Jain2975"
             target="_blank"
