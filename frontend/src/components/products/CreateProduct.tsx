@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { createProduct } from "../../services/productServices";
+import {
+  createProduct,
+  ImportProductZip,
+} from "../../services/productServices";
 
 type FormData = {
   name: string;
@@ -87,10 +90,7 @@ const CreateProduct = () => {
         return;
       }
 
-      const formData = new FormData();
-      formData.append("zip", form.zip);
-
-      await createProduct(formData);
+      await ImportProductZip(form.zip);
 
       setSuccess(true);
     } catch {
@@ -99,7 +99,6 @@ const CreateProduct = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
