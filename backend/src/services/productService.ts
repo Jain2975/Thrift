@@ -20,7 +20,6 @@ export const getAllProducts = async ({
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
-        where: { isDeleted: false },
       }),
       prisma.product.count(),
     ]);

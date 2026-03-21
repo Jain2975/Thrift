@@ -3,6 +3,7 @@ import {
   InsertProduct,
   ImportZipProducts,
   RemoveProduct,
+  RestoreProduct,
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
@@ -31,5 +32,7 @@ router.post(
 );
 
 router.delete("/product/:id", requireAuth, requireAdmin, RemoveProduct);
+
+router.post("/restore/:id", requireAuth, requireAdmin, RestoreProduct);
 
 export default router;

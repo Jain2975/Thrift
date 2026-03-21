@@ -4,6 +4,7 @@ import {
   getAllProducts,
   importProductsFromZip,
   deleteProduct,
+  restoreProduct,
 } from "../services/productService.ts";
 import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
@@ -77,7 +78,9 @@ export const ImportZipProducts = async (req: AuthRequest, res: Response) => {
 
 export const RemoveProduct = async (req: AuthRequest, res: Response) => {
   try {
-    const productId = req.body;
+    const productId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
     await deleteProduct(productId);
     return res.status(200).json({
       success: true,
@@ -88,6 +91,25 @@ export const RemoveProduct = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Failed to delete product",
+    });
+  }
+};
+
+export const RestoreProduct = async (req: AuthRequest, res: Response) => {
+  try {
+    const productId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+    await restoreProduct(productId);
+    return res.status(200).json({
+      success: true,
+      message: "Product restored successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to restore product",
     });
   }
 };

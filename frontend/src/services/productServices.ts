@@ -43,3 +43,13 @@ export const ImportProductZip = async (zipFile: File) => {
   const res = await api.post("/products/import", fromData);
   return res.data;
 };
+
+export const deleteProduct = async (id: string) => {
+  const res = await api.delete(`/products/product/${id}`);
+  return res.data;
+};
+
+export const restoreProduct = async (id: string) => {
+  const res = await api.post(`/products/restore/${id}`);
+  return res.data;
+};
