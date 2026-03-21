@@ -35,3 +35,15 @@ export const createProduct = async (data: FormData) => {
 
   return res.data.product;
 };
+
+export const ImportProductZip = async (zipFile: File) => {
+  const fromData = new FormData();
+  fromData.append("file", zipFile);
+
+  const res = await api.post("/products/import", fromData, {
+    headers: {
+      "Content-Type": "application/zip",
+    },
+  });
+  return res.data;
+};

@@ -7,16 +7,20 @@ type FormData = {
   price: string;
   stock: string;
   image: File | null;
+  zip: File | null;
   category: string;
 };
 
 const CreateProduct = () => {
+  const [step, setStep] = useState<"choose" | "single" | "multiple">("choose");
+
   const [form, setForm] = useState<FormData>({
     name: "",
     description: "",
     price: "",
     stock: "",
     image: null,
+    zip: null,
     category: "",
   });
 
@@ -30,18 +34,16 @@ const CreateProduct = () => {
     const { name, value } = e.target;
 
     if (e.target instanceof HTMLInputElement && e.target.type === "file") {
-      setForm({
-        ...form,
-        image: e.target.files ? e.target.files[0] : null,
-      });
+      const file = e.target.files ? e.target.files[0] : null;
+
+      if (name === "image") setForm({ ...form, image: file });
+      if (name === "zip") setForm({ ...form, zip: file });
     } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+      setForm({ ...form, [name]: value });
     }
   };
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  const handleSingleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setError(null);
@@ -65,17 +67,34 @@ const CreateProduct = () => {
       await createProduct(formData);
 
       setSuccess(true);
-
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        stock: "",
-        category: "",
-        image: null,
-      });
-    } catch (err) {
+    } catch {
       setError("Failed to create product");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMultipleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setError(null);
+    setSuccess(false);
+    setLoading(true);
+
+    try {
+      if (!form.zip) {
+        setError("ZIP file required");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("zip", form.zip);
+
+      await createProduct(formData);
+
+      setSuccess(true);
+    } catch {
+      setError("Failed to upload zip");
     } finally {
       setLoading(false);
     }
@@ -83,85 +102,107 @@ const CreateProduct = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg space-y-4"
-      >
-        <h2 className="text-2xl font-bold text-center">Upload Product</h2>
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
+        {step === "choose" && (
+          <div className="space-y-4 text-center">
+            <h2 className="text-2xl font-bold">Choose Upload Type</h2>
 
-        {error && (
-          <div className="bg-red-100 text-red-600 p-2 rounded">{error}</div>
-        )}
+            <button
+              onClick={() => setStep("single")}
+              className="w-full bg-blue-600 text-white p-2 rounded"
+            >
+              Single Product
+            </button>
 
-        {success && (
-          <div className="bg-green-100 text-green-600 p-2 rounded">
-            Product uploaded successfully!
+            <button
+              onClick={() => setStep("multiple")}
+              className="w-full bg-green-600 text-white p-2 rounded"
+            >
+              Multiple Products (ZIP)
+            </button>
           </div>
         )}
 
-        <input
-          name="name"
-          placeholder="Product Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+        {step === "single" && (
+          <form onSubmit={handleSingleSubmit} className="space-y-4">
+            <h2 className="text-xl font-bold text-center">Single Upload</h2>
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+            <input
+              name="name"
+              placeholder="Product Name"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <textarea
+              name="description"
+              placeholder="Description"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              type="number"
+              name="stock"
+              placeholder="Stock"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
 
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
 
-        <input
-          type="number"
-          name="stock"
-          placeholder="Stock"
-          value={form.stock}
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+            <input
+              name="category"
+              placeholder="Category"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
 
-        <input
-          name="image"
-          type="file"
-          accept="image/*"
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+            <button className="w-full bg-blue-600 text-white p-2 rounded">
+              {loading ? "Uploading..." : "Upload"}
+            </button>
+          </form>
+        )}
 
-        <input
-          name="category"
-          placeholder="Category"
-          value={form.category}
-          onChange={handleChange}
-          required
-          className="w-full border p-2 rounded"
-        />
+        {step === "multiple" && (
+          <form onSubmit={handleMultipleSubmit} className="space-y-4">
+            <h2 className="text-xl font-bold text-center">Upload ZIP</h2>
 
-        <button
-          disabled={loading}
-          className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          {loading ? "Uploading..." : "Upload Product"}
-        </button>
-      </form>
+            <input
+              type="file"
+              name="zip"
+              accept=".zip"
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+
+            <button className="w-full bg-green-600 text-white p-2 rounded">
+              {loading ? "Uploading..." : "Upload ZIP"}
+            </button>
+          </form>
+        )}
+
+        {error && <div className="text-red-500 mt-2">{error}</div>}
+        {success && <div className="text-green-500 mt-2">Success!</div>}
+      </div>
     </div>
   );
 };
