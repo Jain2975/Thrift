@@ -24,3 +24,11 @@ const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
     cb(new Error("Only ZIP files allowed"));
   }
 };
+
+export const uploadZIP = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB
+  },
+});

@@ -76,7 +76,7 @@ export const importProductsFromZip = async (
   const extractDir = await extractZip(zipPath);
 
   const csvPath = path.join(extractDir, "products.csv");
-  const imagesDir = path.join(extractDir, "images");
+  const imagesDir = path.join(extractDir, "image");
 
   // Validate ZIP structure
   if (!fs.existsSync(csvPath)) {

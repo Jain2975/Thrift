@@ -8,6 +8,7 @@ import { requireAuth } from "../middlewares/auth.middleware.ts";
 import { requireAdmin } from "../middlewares/requireAdmin.ts";
 import { validateCreateProduct } from "../middlewares/validateCreateProduct.ts";
 import { upload } from "../middlewares/upload.middleware.ts";
+import { uploadZIP } from "../middlewares/uploadZIP.middleware.ts";
 const router = Router();
 
 router.get("/", fetchProducts);
@@ -24,7 +25,7 @@ router.post(
   "/import",
   requireAuth,
   requireAdmin,
-  upload.single("zip"),
+  uploadZIP.single("zip"),
   ImportZipProducts,
 );
 
