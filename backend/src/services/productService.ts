@@ -20,6 +20,7 @@ export const getAllProducts = async ({
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
+        where: { isDeleted: false },
       }),
       prisma.product.count(),
     ]);
@@ -155,8 +156,22 @@ export const importProductsFromZip = async (
   };
 };
 
-export const deleteProduct = async (productId: string) => {
-  return prisma.product.delete({
-    where: { id: productId },
+export const deleteProduct = async (id: string) => {
+  return prisma.product.update({
+    where: { id },
+    data: {
+      isDeleted: true,
+      deletedAt: new Date(),
+    },
+  });
+};
+
+export const restoreProduct = async (id: string) => {
+  return prisma.product.update({
+    where: { id },
+    data: {
+      isDeleted: false,
+      deletedAt: null,
+    },
   });
 };

@@ -50,6 +50,8 @@ model Product {
   imageUrl    String?
   category    String?
   
+  isDeleted   Boolean     @default(false)
+  deletedAt   DateTime?
   createdAt   DateTime    @default(now())
 
   sellerId    String

@@ -182,6 +182,29 @@ const CreateProduct = () => {
 
         {step === "multiple" && (
           <form onSubmit={handleMultipleSubmit} className="space-y-4">
+            <h1 className="text-xl font-bold text-center">
+              {" "}
+              Please follow the instructions to upload a ZIP file containing
+              multiple products.
+            </h1>
+            <p className="text-lg font-bold text-center">
+              {" "}
+              The ZIP file should have the following structure:
+            </p>
+            <pre className="bg-gray-200 p-4 rounded text-sm text-center">
+              products.zip ├── products.csv └── images/ ├── product1.jpg ├──
+              product2.jpg └── ...
+            </pre>
+            <p className="text-center">
+              {" "}
+              The products.csv file should have the following columns: name,
+              description, price, stock, image, category.
+            </p>
+            <p className="text-center">
+              {" "}
+              The image column should contain the filename of the corresponding
+              product image in the images folder.
+            </p>
             <h2 className="text-xl font-bold text-center">Upload ZIP</h2>
 
             <input
@@ -199,7 +222,12 @@ const CreateProduct = () => {
           </form>
         )}
 
-        {error && <div className="text-red-500 mt-2">{error}</div>}
+        {error && (
+          <div className="text-red-500 mt-2">
+            {" "}
+            Sorry Could Not Upload Products{" "}
+          </div>
+        )}
         {success && <div className="text-green-500 mt-2">Success!</div>}
       </div>
     </div>
