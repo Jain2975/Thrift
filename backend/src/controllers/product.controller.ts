@@ -3,6 +3,7 @@ import {
   createProduct,
   getAllProducts,
   importProductsFromZip,
+  deleteProduct,
 } from "../services/productService.ts";
 import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
@@ -70,6 +71,23 @@ export const ImportZipProducts = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Failed to import products",
+    });
+  }
+};
+
+export const RemoveProduct = async (req: AuthRequest, res: Response) => {
+  try {
+    const productId = req.body;
+    await deleteProduct(productId);
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete product",
     });
   }
 };

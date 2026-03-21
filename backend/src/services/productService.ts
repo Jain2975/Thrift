@@ -76,7 +76,7 @@ export const importProductsFromZip = async (
   const extractDir = await extractZip(zipPath);
 
   const csvPath = path.join(extractDir, "products.csv");
-  const imagesDir = path.join(extractDir, "image");
+  const imagesDir = path.join(extractDir, "images");
 
   // Validate ZIP structure
   if (!fs.existsSync(csvPath)) {
@@ -98,7 +98,7 @@ export const importProductsFromZip = async (
 
   let imported = 0;
   let failed = 0;
-
+  console.log("Rows:", rows.length);
   for (const row of rows) {
     try {
       const name = row.name?.trim();
@@ -153,4 +153,10 @@ export const importProductsFromZip = async (
     failed,
     total: rows.length,
   };
+};
+
+export const deleteProduct = async (productId: string) => {
+  return prisma.product.delete({
+    where: { id: productId },
+  });
 };

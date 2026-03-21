@@ -2,6 +2,7 @@ import {
   fetchProducts,
   InsertProduct,
   ImportZipProducts,
+  RemoveProduct,
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
@@ -28,5 +29,7 @@ router.post(
   uploadZIP.single("zip"),
   ImportZipProducts,
 );
+
+router.delete("/product/:id", requireAuth, requireAdmin, RemoveProduct);
 
 export default router;
