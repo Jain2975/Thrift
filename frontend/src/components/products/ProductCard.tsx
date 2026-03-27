@@ -34,13 +34,21 @@ const ProductCard = ({ product }: { product: Product }) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition">
-      {product.imageUrl && (
-        <img
-          src={`http://localhost:3000${product.imageUrl}`}
-          alt={product.name}
-          className="h-40 w-full object-cover rounded"
-        />
-      )}
+      <div className="relative">
+        {product.imageUrl && (
+          <img
+            src={`http://localhost:3000${product.imageUrl}`}
+            alt={product.name}
+            className="h-40 w-full object-cover rounded"
+          />
+        )}
+
+        {product.isDeleted && (
+          <div className="absolute inset-0 bg-red-600/10 bg-opacity-50 flex items-center justify-center rounded">
+            <span className="text-white text-lg font-bold">Deleted</span>
+          </div>
+        )}
+      </div>
 
       <h3 className="mt-2 font-semibold">{product.name}</h3>
       <p className="text-sm text-gray-500 line-clamp-2">

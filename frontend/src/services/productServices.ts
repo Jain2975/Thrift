@@ -7,6 +7,7 @@ export type Product = {
   price: number;
   imageUrl?: string;
   category?: string;
+  isDeleted: boolean;
   createdAt: string;
 };
 export type GetProductsResponse = {
