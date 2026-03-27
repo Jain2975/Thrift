@@ -12,6 +12,11 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
+  const handleUpdateProduct = (updatedProduct: Product) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
+    );
+  };
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -33,7 +38,11 @@ const ProductList = () => {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onUpdate={handleUpdateProduct}
+          />
         ))}
       </div>
 

@@ -3,7 +3,13 @@ import { AddItemToCart } from "../../services/cartServices";
 import { deleteProduct, restoreProduct } from "../../services/productServices";
 import { toast } from "react-toastify";
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({
+  product,
+  onUpdate,
+}: {
+  product: Product;
+  onUpdate: (product: Product) => void;
+}) => {
   const handleAddToCart = async () => {
     try {
       await AddItemToCart(product.id, 1);
@@ -17,6 +23,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   const handleDelete = async () => {
     try {
       await deleteProduct(product.id);
+      onUpdate({ ...product, isDeleted: true });
       toast.success("Product Deleted Successfully");
     } catch (err) {
       console.error("Failed To Delete Product", err);
@@ -26,6 +33,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   const handleRestore = async () => {
     try {
       await restoreProduct(product.id);
+      onUpdate({ ...product, isDeleted: false });
       toast.success("Product Restored Successfully");
     } catch (err) {
       console.error("Failed To Restore Product", err);
