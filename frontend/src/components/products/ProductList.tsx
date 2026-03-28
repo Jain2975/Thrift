@@ -3,9 +3,6 @@ import { getAllProducts, type Product } from "../../services/productServices";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
 
-import { deleteProduct, restoreProduct } from "../../services/productServices";
-import { toast } from "react-toastify";
-
 const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
