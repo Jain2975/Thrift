@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, createContext } from "react";
-
 import api from "../api/axios";
+import { setCsrfToken as setAxiosCsrfToken } from "../api/axios";
 
 type User = {
   id: string;
@@ -24,7 +24,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [csrfToken,setcsrfToken] = useState("");
+  const fetchCsrfToken = async () => {
+    try{
+    const res = await api.get("/csrf-token");
+    setcsrfToken(res.data.csrfToken);
+    setAxiosCsrfToken(res.data.csrfToken)
+  }catch(error){
+    console.log(error);
+  }
+  }
   useEffect(() => {
+    const init = async()=>{
+      await fetchCsrfToken();
+    }
+    
     const fetchUser = async () => {
       try {
         const res = await api.get("/auth/me");
@@ -35,6 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
       }
     };
+    init();
 
     fetchUser();
   }, []);

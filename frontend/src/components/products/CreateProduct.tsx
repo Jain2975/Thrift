@@ -187,27 +187,19 @@ const CreateProduct = () => {
               Please follow the instructions to upload a ZIP file containing
               multiple products.
             </h1>
-            <p className="text-lg font-bold text-center">
-              {" "}
-              The ZIP file should have the following structure:
-            </p>
-            <pre className="bg-gray-200 p-4 rounded text-sm text-center">
-              products.zip ├── products.csv └── images/ ├── product1.jpg ├──
-              product2.jpg └── ...
-            </pre>
-            <p className="text-center">
-              {" "}
-              The products.csv file should have the following columns: name,
-              description, price, stock, image, category.
-            </p>
-            <p className="text-center">
-              {" "}
-              The image column should contain the filename of the corresponding
-              product image in the images folder.
-            </p>
-            <h2 className="text-xl font-bold text-center">Upload ZIP</h2>
+            <div className="bg-gray-100 p-4 rounded text-sm space-y-2">
+              <p className="font-semibold">📁 Folder structure:</p>
+              <p>products.zip → products.csv + images/</p>
 
+              <p className="font-semibold mt-2">📄 CSV should contain:</p>
+              <p>name, description, price, stock, image, category</p>
+
+              <p className="font-semibold mt-2">🖼 Images:</p>
+              <p>Place all images inside <span className="font-mono">images/</span> folder</p>
+              <p>Image name in CSV must match file name</p>
+            </div>
             <input
+
               type="file"
               name="zip"
               accept=".zip"
