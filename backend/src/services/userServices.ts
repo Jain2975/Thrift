@@ -21,3 +21,16 @@ export const getOrderHistory = async (userId: string) => {
     console.log("Error getting user order history: ", err);
   }
 };
+
+export const updateUserRole = async (userId: string, role: string) => {
+  try {
+    const resp = await prisma.user.update({
+      where: { id: userId },
+      data: { role: role as any },
+    });
+    return resp;
+  } catch (err) {
+    console.log("Error updating user role: ", err);
+    throw err;
+  }
+};

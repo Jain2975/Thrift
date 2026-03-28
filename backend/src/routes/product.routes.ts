@@ -7,7 +7,7 @@ import {
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
-import { requireAdmin } from "../middlewares/requireAdmin.ts";
+import { requireAdmin, requireSellerOrAdmin } from "../middlewares/requireAdmin.ts";
 import { validateCreateProduct } from "../middlewares/validateCreateProduct.ts";
 import { upload } from "../middlewares/upload.middleware.ts";
 import { uploadZIP } from "../middlewares/uploadZIP.middleware.ts";
@@ -17,7 +17,7 @@ router.get("/", fetchProducts);
 router.post(
   "/create",
   requireAuth,
-  requireAdmin,
+  requireSellerOrAdmin,
   upload.single("image"),
   validateCreateProduct,
   InsertProduct,
@@ -26,13 +26,13 @@ router.post(
 router.post(
   "/import",
   requireAuth,
-  requireAdmin,
+  requireSellerOrAdmin,
   uploadZIP.single("zip"),
   ImportZipProducts,
 );
 
-router.delete("/product/:id", requireAuth, requireAdmin, RemoveProduct);
+router.delete("/product/:id", requireAuth, requireSellerOrAdmin, RemoveProduct);
 
-router.post("/restore/:id", requireAuth, requireAdmin, RestoreProduct);
+router.post("/restore/:id", requireAuth, requireSellerOrAdmin, RestoreProduct);
 
 export default router;

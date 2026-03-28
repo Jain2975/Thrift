@@ -90,7 +90,7 @@ const Header: React.FC = () => {
                           <UserCircle className="w-4 h-4 text-slate-400" />
                           Profile
                         </Link>
-                        {user.role === "ADMIN" && (
+                        {(user.role === "ADMIN" || user.role === "SELLER") && (
                           <Link
                             to="/upload-product"
                             onClick={() => setOpen(false)}
