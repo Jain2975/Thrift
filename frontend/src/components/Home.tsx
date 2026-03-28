@@ -1,5 +1,7 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
 interface Item {
   id: number;
   image: string;
@@ -28,39 +30,62 @@ const featuredItems: Item[] = [
   },
 ];
 
+const containerVariants: any = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const itemVariants: any = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
 const Home: React.FC = () => {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 text-slate-900 flex flex-col items-center px-6">
+    <div className="flex flex-col items-center px-6 pb-20 pt-10">
       {/* Hero Section */}
-      <div className="text-center max-w-3xl mt-24 mb-24">
-        <h1 className="text-6xl font-extrabold tracking-tight bg-linear-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="text-center max-w-3xl mt-24 mb-24"
+      >
+        <h1 className="text-6xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent pb-2">
           Thrift Commerce
         </h1>
 
-        <p className="mt-6 text-xl text-slate-600">
+        <p className="mt-6 text-xl text-slate-600 leading-relaxed">
           Buy & sell premium second-hand products.
-          <span className="text-blue-600 font-semibold">
-            {" "}
-            Sustainable. Smart. Affordable.
+          <span className="text-blue-600 font-semibold block sm:inline mt-2 sm:mt-0">
+            {" "}Sustainable. Smart. Affordable.
           </span>
         </p>
 
         <Link to="/dashboard">
-          <button className="mt-10 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg rounded-full shadow-xl transition transform hover:-translate-y-1">
+          <button className="mt-10 px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-lg rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-1 hover:shadow-xl active:scale-95">
             Explore Marketplace
           </button>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Trust Section */}
-      <div className="max-w-6xl w-full text-center">
-        <h2 className="text-4xl font-bold mb-4">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="max-w-6xl w-full text-center"
+      >
+        <motion.h2 variants={itemVariants} className="text-4xl font-bold mb-4 text-slate-800">
           Built for Smart Sustainable Commerce
-        </h2>
-        <p className="text-slate-600 mb-12 text-lg">
+        </motion.h2>
+        <motion.p variants={itemVariants} className="text-slate-600 mb-12 text-lg">
           Join thousands of users making smarter buying decisions while reducing
           waste.
-        </p>
+        </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <TrustCard
@@ -79,20 +104,26 @@ const Home: React.FC = () => {
             text="Trusted sellers, ratings, and secure transactions."
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Featured Items */}
-      <div className="mt-16 w-full max-w-7xl">
-        <h2 className="text-4xl font-bold text-center mb-14">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="mt-28 w-full max-w-7xl"
+      >
+        <motion.h2 variants={itemVariants} className="text-4xl font-bold text-center mb-14 text-slate-800">
           Featured Listings
-        </h2>
+        </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {featuredItems.map((item) => (
             <ItemCard key={item.id} item={item} />
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -106,11 +137,13 @@ const TrustCard = ({
   icon: string;
   text: string;
 }) => (
-  <div className="bg-white/70 backdrop-blur-xl border border-slate-200 rounded-2xl p-8 hover:shadow-xl transition">
-    <h3 className="text-3xl font-bold text-blue-600">{icon}</h3>
-    <h4 className="text-xl font-semibold mt-3">{title}</h4>
-    <p className="text-slate-600 mt-2">{text}</p>
-  </div>
+  <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-8 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-white/60">
+      <h3 className="text-3xl text-blue-600">{icon}</h3>
+    </div>
+    <h4 className="text-xl font-bold text-slate-800 mt-3">{title}</h4>
+    <p className="text-slate-600 mt-3 leading-relaxed">{text}</p>
+  </motion.div>
 );
 
 interface ItemCardProps {
@@ -118,22 +151,20 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item }) => (
-  <div className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-3">
-    <div className="overflow-hidden rounded-xl">
+  <motion.div variants={itemVariants} className="group bg-white/70 backdrop-blur-md border border-white/40 rounded-3xl p-5 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/60 hover:-translate-y-2 transition-all duration-300">
+    <div className="overflow-hidden rounded-2xl bg-slate-100">
       <img
         src={item.image}
         alt={item.title}
-        className="w-full h-64 object-cover group-hover:scale-105 transition duration-500"
+        className="w-full h-72 object-cover group-hover:scale-105 transition duration-700 ease-out"
       />
     </div>
 
-    <h3 className="text-2xl font-semibold mt-5">{item.title}</h3>
-    <p className="text-slate-600 mt-2">{item.condition}</p>
-
-    <div className="mt-4 flex justify-between items-center">
-      {/* <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500">View</button> */}
+    <div className="px-2 pt-5 pb-2">
+      <h3 className="text-2xl font-bold text-slate-800">{item.title}</h3>
+      <p className="text-slate-500 font-medium mt-1">{item.condition}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default Home;
