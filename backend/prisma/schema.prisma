@@ -39,6 +39,7 @@ model User {
   products  Product[]   
   orders    Order[]
   cart      Cart?
+  wishlist  Wishlist?
 }
 
 model Product {
@@ -57,8 +58,9 @@ model Product {
   sellerId    String
   seller      User        @relation(fields: [sellerId], references: [id])
 
-  orderItems  OrderItem[]
-  cartItems   CartItem[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
 
   @@index([category])
   @@index([price])
@@ -101,4 +103,24 @@ model CartItem {
   product   Product @relation(fields: [productId], references: [id])
   cartId    String
   cart      Cart    @relation(fields: [cartId], references: [id])
+}
+
+model Wishlist {
+  id        String         @id @default(uuid())
+  userId    String         @unique
+  user      User           @relation(fields: [userId], references: [id])
+  items     WishlistItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model WishlistItem {
+  id         String   @id @default(uuid())
+  wishlistId String
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([wishlistId, productId])
 }

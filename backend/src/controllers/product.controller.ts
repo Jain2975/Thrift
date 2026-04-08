@@ -12,7 +12,14 @@ export const fetchProducts = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 12;
-    const data = await getAllProducts({ page, limit });
+    const minPrice = req.query.minPrice ? Number(req.query.minPrice) : undefined;
+    const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : undefined;
+    const category = req.query.category as string | undefined;
+    const search = req.query.search as string | undefined;
+    const sortBy = req.query.sortBy as string | undefined;
+    const includeDeleted = req.query.includeDeleted === 'true';
+    
+    const data = await getAllProducts({ page, limit, minPrice, maxPrice, category, search, sortBy, includeDeleted });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Server Error ! Could not get products" });

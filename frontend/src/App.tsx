@@ -10,6 +10,7 @@ import CartPage from "./components/Cart/CartPage";
 import ProtectedRoute from "./ProtectedRoute";
 import UserProfile from "./components/Profile/UserProfile";
 import CreateProduct from "./components/products/CreateProduct";
+import WishlistPage from "./components/Profile/WishlistPage";
 function App() {
   return (
     <Routes>
@@ -34,23 +35,31 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute>
+              <WishlistPage />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/upload-product"
+          element={
+            <ProtectedRoute>
+              <CreateProduct />
+            </ProtectedRoute>
+          }
+        ></Route>
       </Route>
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <UserProfile />
-          </ProtectedRoute>
-        }
-      ></Route>
-      <Route
-        path="/upload-product"
-        element={
-          <ProtectedRoute>
-            <CreateProduct />
-          </ProtectedRoute>
-        }
-      ></Route>
       {/* Auth pages layout */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />

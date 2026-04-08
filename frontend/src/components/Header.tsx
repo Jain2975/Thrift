@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import { User, LogOut, ShoppingCart, LayoutDashboardIcon, ChevronDown, UploadCloud, UserCircle } from "lucide-react";
+import { User, LogOut, ShoppingCart, LayoutDashboardIcon, ChevronDown, UploadCloud, UserCircle, Heart } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -49,6 +49,11 @@ const Header: React.FC = () => {
             {/* Cart Icon */}
             <Link to="/cart" className="p-2 rounded-full hover:bg-black/5 transition-colors group">
               <ShoppingCart className="w-6 h-6 text-slate-600 group-hover:text-blue-600 group-hover:scale-110 transition-all" />
+            </Link>
+            
+            {/* Wishlist Icon */}
+            <Link to="/wishlist" className="p-2 rounded-full hover:bg-black/5 transition-colors group">
+              <Heart className="w-6 h-6 text-slate-600 group-hover:text-red-500 group-hover:scale-110 transition-all" />
             </Link>
 
             {/* User Section */}

@@ -8,20 +8,61 @@ import { parseProductCsv } from "../utils/csvProductParser.ts";
 type GetProductOptions = {
   page?: number;
   limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  category?: string;
+  search?: string;
+  sortBy?: string;
+  includeDeleted?: boolean;
 };
 export const getAllProducts = async ({
   page = 1,
   limit = 12,
+  minPrice,
+  maxPrice,
+  category,
+  search,
+  sortBy,
+  includeDeleted = false,
 }: GetProductOptions = {}) => {
   try {
     const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (!includeDeleted) {
+      where.isDeleted = false;
+    }
+
+    if (category) {
+      where.category = category;
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price.gte = minPrice;
+      if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    let orderBy: any = { createdAt: "desc" };
+    if (sortBy === "price_asc") orderBy = { price: "asc" };
+    else if (sortBy === "price_desc") orderBy = { price: "desc" };
+    else if (sortBy === "newest") orderBy = { createdAt: "desc" };
+
     const [products, total] = await Promise.all([
       prisma.product.findMany({
+        where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy,
       }),
-      prisma.product.count(),
+      prisma.product.count({ where }),
     ]);
 
     return {

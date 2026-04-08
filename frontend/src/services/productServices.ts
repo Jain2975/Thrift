@@ -21,9 +21,15 @@ export type GetProductsResponse = {
 export const getAllProducts = async (
   page: number = 1,
   limit: number = 12,
+  minPrice?: number,
+  maxPrice?: number,
+  category?: string,
+  search?: string,
+  sortBy?: string,
+  includeDeleted?: boolean,
 ): Promise<GetProductsResponse> => {
   const res = await api.get("/products", {
-    params: { page, limit },
+    params: { page, limit, minPrice, maxPrice, category, search, sortBy, includeDeleted },
   });
   return res.data;
 };

@@ -11,6 +11,7 @@ import productRoutes from "./routes/product.routes.ts";
 import CartRoutes from "./routes/cart.routes.ts";
 import userRoutes from "./routes/user.routes.ts";
 import orderRoutes from "./routes/order.routes.ts";
+import wishlistRoutes from "./routes/wishlist.routes.ts";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -46,6 +47,7 @@ app.use("/products", productRoutes);
 app.use("/cart", CartRoutes);
 app.use("/user", userRoutes);
 app.use("/order", orderRoutes);
+app.use("/wishlist", wishlistRoutes);
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
