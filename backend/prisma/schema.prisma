@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -27,7 +21,19 @@ enum OrderStatus {
   delivered
   cancelled
 }
-
+enum ReportReason{
+  INAPPROPRIATE_CONTENT
+  COUNTERFEIT_ITEM
+  WRONG_CATEGORY
+  SPAM
+  FRAUD
+  OTHER
+}
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -36,8 +42,11 @@ model User {
   role      Role     @default(USER)
   createdAt DateTime @default(now())
 
+
+
   products  Product[]   
   orders    Order[]
+  reports  Report[] @relation("UserReports")
   cart      Cart?
   wishlist  Wishlist?
 }
@@ -54,6 +63,8 @@ model Product {
   isDeleted   Boolean     @default(false)
   deletedAt   DateTime?
   createdAt   DateTime    @default(now())
+  
+  isSuspended Boolean     @default(false)
 
   sellerId    String
   seller      User        @relation(fields: [sellerId], references: [id])
@@ -61,6 +72,7 @@ model Product {
   orderItems    OrderItem[]
   cartItems     CartItem[]
   wishlistItems WishlistItem[]
+  reports       Report[] 
 
   @@index([category])
   @@index([price])
@@ -123,4 +135,21 @@ model WishlistItem {
   createdAt  DateTime @default(now())
 
   @@unique([wishlistId, productId])
+}
+
+model Report{
+  id        String       @id @default(uuid())
+  reason    ReportReason
+  details   String?      
+  status    ReportStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  reporterId String
+  reporter   User   @relation("UserReports", fields: [reporterId], references: [id])
+
+  @@unique([productId,reporterId])
+  @@index([status])
 }
