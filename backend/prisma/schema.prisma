@@ -21,7 +21,14 @@ enum OrderStatus {
   delivered
   cancelled
 }
-enum ReportReason{
+
+enum ProductStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReportReason {
   INAPPROPRIATE_CONTENT
   COUNTERFEIT_ITEM
   WRONG_CATEGORY
@@ -29,11 +36,13 @@ enum ReportReason{
   FRAUD
   OTHER
 }
+
 enum ReportStatus {
   PENDING
   REVIEWED
   DISMISSED
 }
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -42,37 +51,41 @@ model User {
   role      Role     @default(USER)
   createdAt DateTime @default(now())
 
-
-
-  products  Product[]   
-  orders    Order[]
-  reports  Report[] @relation("UserReports")
-  cart      Cart?
-  wishlist  Wishlist?
+  products       Product[]
+  orders         Order[]
+  reports        Report[]       @relation("UserReports")
+  cart           Cart?
+  wishlist       Wishlist?
+  reviews        Review[]
+  sentMessages   Message[]
+  conversations1 Conversation[] @relation("Participant1")
+  conversations2 Conversation[] @relation("Participant2")
 }
 
 model Product {
-  id          String      @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
-  price       Decimal     @db.Decimal(10, 2)
-  stock       Int         @default(0)
+  price       Decimal @db.Decimal(10, 2)
+  stock       Int     @default(0)
   imageUrl    String?
   category    String?
-  
-  isDeleted   Boolean     @default(false)
-  deletedAt   DateTime?
-  createdAt   DateTime    @default(now())
-  
-  isSuspended Boolean     @default(false)
 
-  sellerId    String
-  seller      User        @relation(fields: [sellerId], references: [id])
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  isSuspended    Boolean       @default(false)
+  approvalStatus ProductStatus @default(APPROVED)
+
+  sellerId String
+  seller   User   @relation(fields: [sellerId], references: [id])
 
   orderItems    OrderItem[]
   cartItems     CartItem[]
   wishlistItems WishlistItem[]
-  reports       Report[] 
+  reports       Report[]
+  reviews       Review[]
 
   @@index([category])
   @@index([price])
@@ -90,9 +103,9 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
-  quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  id       String  @id @default(uuid())
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
@@ -137,19 +150,60 @@ model WishlistItem {
   @@unique([wishlistId, productId])
 }
 
-model Report{
+model Report {
   id        String       @id @default(uuid())
   reason    ReportReason
-  details   String?      
+  details   String?
   status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
 
   productId String
-  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   reporterId String
   reporter   User   @relation("UserReports", fields: [reporterId], references: [id])
 
-  @@unique([productId,reporterId])
+  @@unique([productId, reporterId])
   @@index([status])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participant1Id String
+  participant1   User   @relation("Participant1", fields: [participant1Id], references: [id])
+  participant2Id String
+  participant2   User   @relation("Participant2", fields: [participant2Id], references: [id])
+
+  messages Message[]
+
+  @@unique([participant1Id, participant2Id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
 }

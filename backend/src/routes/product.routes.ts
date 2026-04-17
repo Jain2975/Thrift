@@ -4,6 +4,10 @@ import {
   ImportZipProducts,
   RemoveProduct,
   RestoreProduct,
+  fetchAdminProducts,
+  ApproveProductHandler,
+  RejectProductHandler,
+  fetchProductById,
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
@@ -13,6 +17,11 @@ import { upload } from "../middlewares/upload.middleware.ts";
 import { uploadZIP } from "../middlewares/uploadZIP.middleware.ts";
 const router = Router();
 
+router.get("/admin", requireAuth, requireAdmin, fetchAdminProducts);
+router.post("/approve/:id", requireAuth, requireAdmin, ApproveProductHandler);
+router.post("/reject/:id", requireAuth, requireAdmin, RejectProductHandler);
+
+router.get("/product/:id", fetchProductById);
 router.get("/", fetchProducts);
 router.post(
   "/create",

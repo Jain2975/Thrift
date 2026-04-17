@@ -2,8 +2,9 @@ import { type Product } from "../../services/productServices";
 import { AddItemToCart } from "../../services/cartServices";
 import { deleteProduct, restoreProduct } from "../../services/productServices";
 import { toast } from "react-toastify";
-import { Heart, ShoppingCart, Trash2, ArchiveRestore } from "lucide-react";
+import { Heart, ShoppingCart, Trash2, ArchiveRestore, Info } from "lucide-react";
 import { useAuth } from "../../Context/AuthContext";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({
   product,
@@ -17,7 +18,7 @@ const ProductCard = ({
   onToggleFavorite?: (productId: string, currentStatus: boolean) => void;
 }) => {
   const { user } = useAuth();
-  
+
   const handleAddToCart = async () => {
     try {
       await AddItemToCart(product.id, 1);
@@ -65,12 +66,12 @@ const ProductCard = ({
           </div>
         )}
         {onToggleFavorite && (
-          <button 
+          <button
             onClick={() => onToggleFavorite(product.id, isFavorite)}
             className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm transition flex items-center justify-center"
           >
-            <Heart 
-              className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
+            <Heart
+              className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
             />
           </button>
         )}
@@ -81,17 +82,33 @@ const ProductCard = ({
         {product.description}
       </p>
 
-      <p className="mt-2 font-bold text-blue-600">₹{product.price}</p>
-      
-      <div className="mt-4 flex gap-2">
-        <button
-          onClick={handleAddToCart}
-          className="flex-1 flex justify-center items-center gap-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          title="Add to Cart"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          <span className="text-sm font-medium">Add</span>
-        </button>
+      <div className="flex justify-between items-center mt-2">
+        <p className="font-bold text-blue-600">₹{product.price}</p>
+        <p className={`text-xs ${product.stock > 0 ? "text-green-600" : "text-red-500 font-bold"}`}>
+          {product.stock > 0 ? `${product.stock} items left` : "Out of stock"}
+        </p>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-2">
+        <div className="flex gap-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={product.stock === 0}
+            className={`flex-1 flex justify-center items-center gap-2 ${product.stock > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'} text-white py-2 rounded-lg transition`}
+            title="Add to Cart"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span className="text-sm font-medium">Add</span>
+          </button>
+          <Link
+            to={`/product/${product.id}`}
+            className="flex-1 flex justify-center items-center gap-2 bg-gray-100 text-gray-700 border border-gray-200 py-2 rounded-lg hover:bg-gray-200 transition"
+            title="View Details"
+          >
+            <Info className="w-4 h-4" />
+            <span className="text-sm font-medium">Details</span>
+          </Link>
+        </div>
 
         {user && (user.role === 'ADMIN' || user.role === 'SELLER') && (
           !product.isDeleted ? (

@@ -14,6 +14,7 @@ type GetProductOptions = {
   search?: string;
   sortBy?: string;
   includeDeleted?: boolean;
+  status?: "PENDING" | "APPROVED" | "REJECTED" | "ALL";
 };
 export const getAllProducts = async ({
   page = 1,
@@ -85,6 +86,7 @@ interface CreateProductInput {
   imageUrl?: string;
   category?: string;
   sellerId: string;
+  approvalStatus?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export const createProduct = async (data: CreateProductInput) => {
@@ -96,6 +98,7 @@ export const createProduct = async (data: CreateProductInput) => {
       stock: data.stock ?? 0,
       imageUrl: data.imageUrl,
       category: data.category,
+      approvalStatus: data.approvalStatus || "APPROVED",
       seller: { connect: { id: data.sellerId } },
     },
   });
@@ -180,6 +183,7 @@ export const importProductsFromZip = async (
         imageUrl,
         category,
         sellerId,
+        approvalStatus: "PENDING",
       });
 
       imported++;
@@ -212,6 +216,24 @@ export const restoreProduct = async (id: string) => {
     data: {
       isDeleted: false,
       deletedAt: null,
+    },
+  });
+};
+
+export const approveProduct = async (id: string) => {
+  return prisma.product.update({
+    where: { id },
+    data: {
+      approvalStatus: "APPROVED",
+    },
+  });
+};
+
+export const rejectProduct = async (id: string) => {
+  return prisma.product.update({
+    where: { id },
+    data: {
+      approvalStatus: "REJECTED",
     },
   });
 };

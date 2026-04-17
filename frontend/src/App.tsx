@@ -11,18 +11,32 @@ import ProtectedRoute from "./ProtectedRoute";
 import UserProfile from "./components/Profile/UserProfile";
 import CreateProduct from "./components/products/CreateProduct";
 import WishlistPage from "./components/Profile/WishlistPage";
+import ProductDetails from "./components/products/ProductDetails";
+import AdminApprovals from "./components/admin/AdminApprovals";
+import ChatWidget from "./components/chat/ChatWidget";
+
 function App() {
   return (
-    <Routes>
+    <>
+      <Routes>
       {/* Main site layout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
 
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/approvals"
+          element={
+            <ProtectedRoute>
+              <AdminApprovals />
             </ProtectedRoute>
           }
         />
@@ -66,6 +80,8 @@ function App() {
         <Route path="/register" element={<Register />} />
       </Route>
     </Routes>
+    <ChatWidget />
+    </>
   );
 }
 

@@ -173,7 +173,7 @@ const CartPage = () => {
             className="flex items-center gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition"
           >
             <img
-              src={item.product.imageUrl || ""}
+              src={`http://localhost:3000${item.product.imageUrl}`}
               alt={item.product.name}
               className="w-48 h-48 object-cover rounded"
             />

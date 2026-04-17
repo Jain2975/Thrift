@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import http from "http";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
@@ -12,12 +13,20 @@ import CartRoutes from "./routes/cart.routes.ts";
 import userRoutes from "./routes/user.routes.ts";
 import orderRoutes from "./routes/order.routes.ts";
 import wishlistRoutes from "./routes/wishlist.routes.ts";
+import reviewRoutes from "./routes/review.routes.ts";
+import chatRoutes from "./routes/chat.routes.ts";
+import reportRoutes from "./routes/report.routes.ts";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+const server = http.createServer(app);
+
+// Initialize socket
+import { initSocket } from "./socket.ts";
+initSocket(server);
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },  
@@ -48,6 +57,9 @@ app.use("/cart", CartRoutes);
 app.use("/user", userRoutes);
 app.use("/order", orderRoutes);
 app.use("/wishlist", wishlistRoutes);
-app.listen(3000, () => {
+app.use("/reviews", reviewRoutes);
+app.use("/chats", chatRoutes);
+app.use("/reports", reportRoutes);
+server.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

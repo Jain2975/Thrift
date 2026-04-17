@@ -1,14 +1,31 @@
 import { type Request, type Response } from "express";
+import { prisma } from "../db/prisma.ts";
 import {
   createProduct,
   getAllProducts,
   importProductsFromZip,
   deleteProduct,
   restoreProduct,
+  approveProduct,
+  rejectProduct,
 } from "../services/productService.ts";
 import type { AuthRequest } from "../middlewares/auth.middleware.ts";
 
-export const fetchProducts = async (req: Request, res: Response) => {
+  export const fetchProductById = async (req: Request, res: Response) => {
+    try {
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id as string;
+      const product = await prisma.product.findUnique({
+        where: { id },
+        include: { seller: { select: { id: true, name: true, email: true } } }
+      });
+      if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+      res.json({ success: true, product });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+  
+  export const fetchProducts = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 12;
@@ -19,7 +36,10 @@ export const fetchProducts = async (req: Request, res: Response) => {
     const sortBy = req.query.sortBy as string | undefined;
     const includeDeleted = req.query.includeDeleted === 'true';
     
-    const data = await getAllProducts({ page, limit, minPrice, maxPrice, category, search, sortBy, includeDeleted });
+    // Normal users only see APPROVED products
+    const status = "APPROVED";
+    
+    const data = await getAllProducts({ page, limit, minPrice, maxPrice, category, search, sortBy, includeDeleted, status });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Server Error ! Could not get products" });
@@ -118,5 +138,37 @@ export const RestoreProduct = async (req: AuthRequest, res: Response) => {
       success: false,
       message: "Failed to restore product",
     });
+  }
+};
+
+export const fetchAdminProducts = async (req: AuthRequest, res: Response) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 12;
+    const status = req.query.status as any || "ALL";
+    const data = await getAllProducts({ page, limit, status });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error ! Could not get admin products" });
+  }
+};
+
+export const ApproveProductHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    const productId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id as string;
+    await approveProduct(productId);
+    return res.status(200).json({ success: true, message: "Product approved" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to approve product" });
+  }
+};
+
+export const RejectProductHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    const productId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id as string;
+    await rejectProduct(productId);
+    return res.status(200).json({ success: true, message: "Product rejected" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to reject product" });
   }
 };
