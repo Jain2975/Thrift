@@ -24,7 +24,7 @@ export const createOrderFromCart = async (userId: string) => {
         return sum + Number(item.product.price) * item.quantity;
       }, 0);
 
-      // 3. Create the Order (status: paid, to mock a successful transaction)
+      // 3. Create the Order (status: paid) and decrement stock
       const newOrder = await tx.order.create({
         data: {
           userId,
@@ -39,6 +39,17 @@ export const createOrderFromCart = async (userId: string) => {
           },
         },
       });
+
+      // 3.5 Decrement Stock
+      for (const cartItem of cart.items) {
+        if (cartItem.product.stock < cartItem.quantity) {
+          throw new Error(`Insufficient stock for product: ${cartItem.product.name}`);
+        }
+        await tx.product.update({
+          where: { id: cartItem.productId },
+          data: { stock: { decrement: cartItem.quantity } },
+        });
+      }
 
       // 4. Delete the Cart items since order is created
       await tx.cartItem.deleteMany({

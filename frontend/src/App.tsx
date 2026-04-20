@@ -13,6 +13,8 @@ import CreateProduct from "./components/products/CreateProduct";
 import WishlistPage from "./components/Profile/WishlistPage";
 import ProductDetails from "./components/products/ProductDetails";
 import AdminApprovals from "./components/admin/AdminApprovals";
+import AdminReports from "./components/admin/AdminReports";
+import AdminOrders from "./components/admin/AdminOrders";
 import ChatWidget from "./components/chat/ChatWidget";
 
 function App() {
@@ -37,6 +39,22 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminApprovals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute>
+              <AdminReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute>
+              <AdminOrders />
             </ProtectedRoute>
           }
         />

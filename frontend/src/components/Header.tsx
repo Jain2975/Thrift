@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import { User, LogOut, ShoppingCart, LayoutDashboardIcon, ChevronDown, UploadCloud, UserCircle, Heart } from "lucide-react";
+import { User, LogOut, ShoppingCart, LayoutDashboardIcon, ChevronDown, UploadCloud, UserCircle, Heart, ShieldCheck, AlertTriangle, Package } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -104,6 +104,34 @@ const Header: React.FC = () => {
                             <UploadCloud className="w-4 h-4 text-slate-400" />
                             Upload Product
                           </Link>
+                        )}
+                        {user.role === "ADMIN" && (
+                          <>
+                            <Link
+                              to="/admin/approvals"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-green-50 rounded-xl text-sm font-medium text-slate-700 hover:text-green-700 transition-colors"
+                            >
+                              <ShieldCheck className="w-4 h-4 text-slate-400" />
+                              Approvals
+                            </Link>
+                            <Link
+                              to="/admin/reports"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-red-50 rounded-xl text-sm font-medium text-slate-700 hover:text-red-700 transition-colors"
+                            >
+                              <AlertTriangle className="w-4 h-4 text-slate-400" />
+                              Reports
+                            </Link>
+                            <Link
+                              to="/admin/orders"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-amber-50 rounded-xl text-sm font-medium text-slate-700 hover:text-amber-700 transition-colors"
+                            >
+                              <Package className="w-4 h-4 text-slate-400" />
+                              Orders
+                            </Link>
+                          </>
                         )}
                       </div>
 
