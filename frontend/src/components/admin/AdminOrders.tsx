@@ -13,7 +13,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/orders/admin");
+      const res = await api.get("/order/admin");
       setOrders(res.data.orders || []);
     } catch (error) {
       toast.error("Failed to fetch orders.");
@@ -24,7 +24,7 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
-      await api.patch(`/orders/admin/${id}/status`, { status: newStatus });
+      await api.patch(`/order/admin/${id}/status`, { status: newStatus });
       toast.success("Order status updated");
       fetchOrders();
     } catch (error) {
