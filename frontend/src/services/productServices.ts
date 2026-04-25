@@ -69,6 +69,22 @@ export const getProductById = async (id: string) => {
   return res.data.product;
 };
 
+export const getSellerProducts = async (page: number = 1, limit: number = 12) => {
+  const res = await api.get("/products/seller/my-products", {
+    params: { page, limit },
+  });
+  return res.data;
+};
+
+export const updateProduct = async (id: string, data: FormData) => {
+  const res = await api.put(`/products/product/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data.product;
+};
+
 export const getProductReviews = async (productId: string) => {
   const res = await api.get(`/reviews/${productId}`);
   return res.data.reviews;

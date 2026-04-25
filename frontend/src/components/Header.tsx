@@ -96,14 +96,24 @@ const Header: React.FC = () => {
                           Profile
                         </Link>
                         {(user.role === "ADMIN" || user.role === "SELLER") && (
-                          <Link
-                            to="/upload-product"
-                            onClick={() => setOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 hover:bg-indigo-50 rounded-xl text-sm font-medium text-slate-700 hover:text-indigo-700 transition-colors"
-                          >
-                            <UploadCloud className="w-4 h-4 text-slate-400" />
-                            Upload Product
-                          </Link>
+                          <>
+                            <Link
+                              to="/upload-product"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-indigo-50 rounded-xl text-sm font-medium text-slate-700 hover:text-indigo-700 transition-colors"
+                            >
+                              <UploadCloud className="w-4 h-4 text-slate-400" />
+                              Upload Product
+                            </Link>
+                            <Link
+                              to="/seller/dashboard"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-indigo-50 rounded-xl text-sm font-medium text-slate-700 hover:text-indigo-700 transition-colors"
+                            >
+                              <LayoutDashboardIcon className="w-4 h-4 text-slate-400" />
+                              Seller Dashboard
+                            </Link>
+                          </>
                         )}
                         {user.role === "ADMIN" && (
                           <>

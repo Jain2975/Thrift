@@ -237,3 +237,20 @@ export const rejectProduct = async (id: string) => {
     },
   });
 };
+
+export const updateProduct = async (
+  id: string,
+  data: {
+    name?: string;
+    description?: string;
+    price?: number;
+    stock?: number;
+    imageUrl?: string;
+    category?: string;
+  }
+) => {
+  return prisma.product.update({
+    where: { id },
+    data,
+  });
+};

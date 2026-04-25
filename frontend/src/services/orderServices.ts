@@ -12,3 +12,8 @@ export const checkoutOrder = async () => {
     }
   }
 };
+
+export const getSellerOrders = async () => {
+  const response = await api.get("/order/seller/orders");
+  return response.data.orders;
+};

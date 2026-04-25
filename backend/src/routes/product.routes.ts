@@ -8,6 +8,8 @@ import {
   ApproveProductHandler,
   RejectProductHandler,
   fetchProductById,
+  EditProduct,
+  fetchSellerProducts,
 } from "../controllers/product.controller.ts";
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.ts";
@@ -23,6 +25,9 @@ router.post("/reject/:id", requireAuth, requireAdmin, RejectProductHandler);
 
 router.get("/product/:id", fetchProductById);
 router.get("/", fetchProducts);
+
+router.get("/seller/my-products", requireAuth, requireSellerOrAdmin, fetchSellerProducts);
+
 router.post(
   "/create",
   requireAuth,
@@ -41,6 +46,14 @@ router.post(
 );
 
 router.delete("/product/:id", requireAuth, requireSellerOrAdmin, RemoveProduct);
+
+router.put(
+  "/product/:id",
+  requireAuth,
+  requireSellerOrAdmin,
+  upload.single("image"),
+  EditProduct,
+);
 
 router.post("/restore/:id", requireAuth, requireSellerOrAdmin, RestoreProduct);
 

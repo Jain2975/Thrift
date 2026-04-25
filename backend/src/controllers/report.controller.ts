@@ -46,7 +46,7 @@ export const getReports = async (req: AuthRequest, res: Response) => {
 
 export const dismissReport = async (req: AuthRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id as string;
     await prisma.report.update({
       where: { id },
       data: { status: "DISMISSED" },
@@ -59,7 +59,7 @@ export const dismissReport = async (req: AuthRequest, res: Response) => {
 
 export const suspendProduct = async (req: AuthRequest, res: Response) => {
   try {
-    const { id } = req.params; // report id
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id as string;
     
     // Find the report to get product ID
     const report = await prisma.report.findUnique({

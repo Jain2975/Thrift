@@ -16,6 +16,7 @@ import AdminApprovals from "./components/admin/AdminApprovals";
 import AdminReports from "./components/admin/AdminReports";
 import AdminOrders from "./components/admin/AdminOrders";
 import ChatWidget from "./components/chat/ChatWidget";
+import SellerDashboard from "./components/seller/SellerDashboard";
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seller/dashboard"
+          element={
+            <ProtectedRoute>
+              <SellerDashboard />
             </ProtectedRoute>
           }
         />
