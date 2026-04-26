@@ -5,7 +5,160 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL")  
+}
+
+model User {
+  id             String         @id @default(uuid())
+  email          String         @unique
+  name           String?
+  password       String
+  role           Role           @default(USER)
+  createdAt      DateTime       @default(now())
+  cart           Cart?
+  conversations1 Conversation[] @relation("Participant1")
+  conversations2 Conversation[] @relation("Participant2")
+  sentMessages   Message[]
+  orders         Order[]
+  products       Product[]
+  reports        Report[]       @relation("UserReports")
+  reviews        Review[]
+  wishlist       Wishlist?
+}
+
+model Product {
+  id             String         @id @default(uuid())
+  name           String
+  description    String?
+  price          Decimal        @db.Decimal(10, 2)
+  stock          Int            @default(0)
+  imageUrl       String?
+  category       String?
+  createdAt      DateTime       @default(now())
+  sellerId       String
+  deletedAt      DateTime?
+  isDeleted      Boolean        @default(false)
+  isSuspended    Boolean        @default(false)
+  approvalStatus ProductStatus  @default(APPROVED)
+  imageHash      String?
+  thumbnailUrl   String?
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  seller         User           @relation(fields: [sellerId], references: [id])
+  reports        Report[]
+  reviews        Review[]
+  wishlistItems  WishlistItem[]
+
+  @@index([category])
+  @@index([price])
+  @@index([sellerId])
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  total     Decimal     @db.Decimal(10, 2)
+  userId    String
+  createdAt DateTime    @default(now())
+  status    OrderStatus @default(pending)
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  productId String
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  productId String
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Wishlist {
+  id        String         @id @default(uuid())
+  userId    String         @unique
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  user      User           @relation(fields: [userId], references: [id])
+  items     WishlistItem[]
+}
+
+model WishlistItem {
+  id         String   @id @default(uuid())
+  wishlistId String
+  productId  String
+  createdAt  DateTime @default(now())
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  @@unique([wishlistId, productId])
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  reason     ReportReason
+  details    String?
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  productId  String
+  reporterId String
+  product    Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  reporter   User         @relation("UserReports", fields: [reporterId], references: [id])
+
+  @@unique([productId, reporterId])
+  @@index([status])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  userId    String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Conversation {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  participant1Id String
+  participant2Id String
+  participant1   User      @relation("Participant1", fields: [participant1Id], references: [id])
+  participant2   User      @relation("Participant2", fields: [participant2Id], references: [id])
+  messages       Message[]
+
+  @@unique([participant1Id, participant2Id])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  content        String
+  createdAt      DateTime     @default(now())
+  conversationId String
+  senderId       String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation(fields: [senderId], references: [id])
 }
 
 enum Role {
@@ -26,6 +179,7 @@ enum ProductStatus {
   PENDING
   APPROVED
   REJECTED
+  FLAGGED
 }
 
 enum ReportReason {
@@ -41,169 +195,4 @@ enum ReportStatus {
   PENDING
   REVIEWED
   DISMISSED
-}
-
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-
-  products       Product[]
-  orders         Order[]
-  reports        Report[]       @relation("UserReports")
-  cart           Cart?
-  wishlist       Wishlist?
-  reviews        Review[]
-  sentMessages   Message[]
-  conversations1 Conversation[] @relation("Participant1")
-  conversations2 Conversation[] @relation("Participant2")
-}
-
-model Product {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-  price       Decimal @db.Decimal(10, 2)
-  stock       Int     @default(0)
-  imageUrl    String?
-  category    String?
-
-  isDeleted Boolean   @default(false)
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-
-  isSuspended    Boolean       @default(false)
-  approvalStatus ProductStatus @default(APPROVED)
-
-  sellerId String
-  seller   User   @relation(fields: [sellerId], references: [id])
-
-  orderItems    OrderItem[]
-  cartItems     CartItem[]
-  wishlistItems WishlistItem[]
-  reports       Report[]
-  reviews       Review[]
-
-  @@index([category])
-  @@index([price])
-  @@index([sellerId])
-}
-
-model Order {
-  id        String      @id @default(uuid())
-  total     Decimal     @db.Decimal(10, 2)
-  status    OrderStatus @default(pending)
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  items     OrderItem[]
-  createdAt DateTime    @default(now())
-}
-
-model OrderItem {
-  id       String  @id @default(uuid())
-  quantity Int
-  price    Decimal @db.Decimal(10, 2)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-  orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
-}
-
-model Cart {
-  id        String     @id @default(uuid())
-  userId    String     @unique
-  user      User       @relation(fields: [userId], references: [id])
-  items     CartItem[]
-  createdAt DateTime   @default(now())
-}
-
-model CartItem {
-  id        String  @id @default(uuid())
-  quantity  Int
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-  cartId    String
-  cart      Cart    @relation(fields: [cartId], references: [id])
-}
-
-model Wishlist {
-  id        String         @id @default(uuid())
-  userId    String         @unique
-  user      User           @relation(fields: [userId], references: [id])
-  items     WishlistItem[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-}
-
-model WishlistItem {
-  id         String   @id @default(uuid())
-  wishlistId String
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-
-  @@unique([wishlistId, productId])
-}
-
-model Report {
-  id        String       @id @default(uuid())
-  reason    ReportReason
-  details   String?
-  status    ReportStatus @default(PENDING)
-  createdAt DateTime     @default(now())
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  reporterId String
-  reporter   User   @relation("UserReports", fields: [reporterId], references: [id])
-
-  @@unique([productId, reporterId])
-  @@index([status])
-}
-
-model Review {
-  id        String   @id @default(uuid())
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  userId    String
-  user      User    @relation(fields: [userId], references: [id])
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, productId])
-}
-
-model Conversation {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  participant1Id String
-  participant1   User   @relation("Participant1", fields: [participant1Id], references: [id])
-  participant2Id String
-  participant2   User   @relation("Participant2", fields: [participant2Id], references: [id])
-
-  messages Message[]
-
-  @@unique([participant1Id, participant2Id])
-}
-
-model Message {
-  id        String   @id @default(uuid())
-  content   String
-  createdAt DateTime @default(now())
-
-  conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
-  senderId String
-  sender   User   @relation(fields: [senderId], references: [id])
 }

@@ -52,11 +52,15 @@ const ProductCard = ({
   return (
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition">
       <div className="relative">
-        {product.imageUrl && (
+        {(product.imageUrl || product.thumbnailUrl) && (
           <img
-            src={`http://localhost:3000${product.imageUrl}`}
+            src={`http://localhost:3000${product.thumbnailUrl ?? product.imageUrl}`}
             alt={product.name}
             className="h-40 w-full object-cover rounded"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/400x300?text=No+Image";
+              e.currentTarget.onerror = null;
+            }}
           />
         )}
 

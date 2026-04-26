@@ -12,17 +12,21 @@ export const createReport = async (req: AuthRequest, res: Response) => {
     }
 
     const report = await prisma.report.create({
-      data: {
-        productId,
-        reporterId,
-        reason,
-        details,
-      },
+      data: { productId, reporterId, reason, details },
     });
+
+    // ── Auto-flag product when it accumulates ≥ 3 reports ─────────────────
+    const reportCount = await prisma.report.count({ where: { productId } });
+    if (reportCount >= 3) {
+      await prisma.product.update({
+        where: { id: productId },
+        data: { approvalStatus: "FLAGGED" },
+      });
+    }
 
     return res.status(201).json({ success: true, report });
   } catch (error: any) {
-    if (error.code === 'P2002') {
+    if (error.code === "P2002") {
       return res.status(400).json({ success: false, message: "You have already reported this product" });
     }
     return res.status(500).json({ success: false, message: "Failed to submit report" });

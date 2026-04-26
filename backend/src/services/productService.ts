@@ -25,6 +25,7 @@ export const getAllProducts = async ({
   search,
   sortBy,
   includeDeleted = false,
+  status,
 }: GetProductOptions = {}) => {
   try {
     const skip = (page - 1) * limit;
@@ -32,6 +33,11 @@ export const getAllProducts = async ({
     const where: any = {};
     if (!includeDeleted) {
       where.isDeleted = false;
+    }
+
+    // Status filter (ALL = no filter)
+    if (status && status !== "ALL") {
+      where.approvalStatus = status;
     }
 
     if (category) {
@@ -62,6 +68,7 @@ export const getAllProducts = async ({
         skip,
         take: limit,
         orderBy,
+        include: { seller: { select: { id: true, name: true, email: true } } },
       }),
       prisma.product.count({ where }),
     ]);
@@ -84,9 +91,11 @@ interface CreateProductInput {
   price: number;
   stock?: number;
   imageUrl?: string;
+  thumbnailUrl?: string;
+  imageHash?: string;
   category?: string;
   sellerId: string;
-  approvalStatus?: "PENDING" | "APPROVED" | "REJECTED";
+  approvalStatus?: "PENDING" | "APPROVED" | "REJECTED" | "FLAGGED";
 }
 
 export const createProduct = async (data: CreateProductInput) => {
@@ -97,6 +106,8 @@ export const createProduct = async (data: CreateProductInput) => {
       price: data.price,
       stock: data.stock ?? 0,
       imageUrl: data.imageUrl,
+      thumbnailUrl: data.thumbnailUrl,
+      imageHash: data.imageHash,
       category: data.category,
       approvalStatus: data.approvalStatus || "APPROVED",
       seller: { connect: { id: data.sellerId } },

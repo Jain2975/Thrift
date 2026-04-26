@@ -104,6 +104,10 @@ export default function ProductDetails() {
           src={`http://localhost:3000${product.imageUrl}`}
           alt={product.name}
           className="w-full h-96 object-cover rounded-xl shadow border border-gray-100"
+          onError={(e) => {
+            e.currentTarget.src = "https://placehold.co/800x600?text=No+Image";
+            e.currentTarget.onerror = null;
+          }}
         />
       </div>
 

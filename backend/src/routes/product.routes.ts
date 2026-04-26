@@ -17,7 +17,22 @@ import { requireAdmin, requireSellerOrAdmin } from "../middlewares/requireAdmin.
 import { validateCreateProduct } from "../middlewares/validateCreateProduct.ts";
 import { upload } from "../middlewares/upload.middleware.ts";
 import { uploadZIP } from "../middlewares/uploadZIP.middleware.ts";
+import { processImage } from "../utils/imageProcessor.ts";
+import rateLimit from "express-rate-limit";
+
 const router = Router();
+
+/** 10 image uploads per IP per hour */
+const uploadRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many uploads. Please wait before uploading more products.",
+  },
+});
 
 router.get("/admin", requireAuth, requireAdmin, fetchAdminProducts);
 router.post("/approve/:id", requireAuth, requireAdmin, ApproveProductHandler);
@@ -32,7 +47,9 @@ router.post(
   "/create",
   requireAuth,
   requireSellerOrAdmin,
+  uploadRateLimit,
   upload.single("image"),
+  processImage,
   validateCreateProduct,
   InsertProduct,
 );
@@ -41,6 +58,7 @@ router.post(
   "/import",
   requireAuth,
   requireSellerOrAdmin,
+  uploadRateLimit,
   uploadZIP.single("zip"),
   ImportZipProducts,
 );
@@ -52,6 +70,7 @@ router.put(
   requireAuth,
   requireSellerOrAdmin,
   upload.single("image"),
+  processImage,
   EditProduct,
 );
 
