@@ -48,9 +48,10 @@ export default function ProductDetails() {
     if (!product) return;
     try {
       await AddItemToCart(product.id, 1);
-      toast.success("Added to Cart");
-    } catch (err) {
-      toast.error("Failed to add to cart");
+      toast.success(`"${product.name}" has been added to your cart!`);
+    } catch (err: any) {
+      const msg = err?.response?.data?.error;
+      toast.error(msg || `Could not add "${product.name}" to cart.`);
     }
   };
 
@@ -59,12 +60,12 @@ export default function ProductDetails() {
     if (!id) return;
     try {
       await createReview(id, rating, comment);
-      toast.success("Review submitted!");
+      toast.success("Your review has been posted successfully!");
       setComment("");
       setRating(5);
       loadData(id);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to submit review");
+      toast.error(error?.response?.data?.message || "Could not submit your review. Please try again.");
     }
   };
 
@@ -73,11 +74,11 @@ export default function ProductDetails() {
     if (!id) return;
     try {
       await createReport(id, reportReason, reportDetails);
-      toast.success("Report submitted to Admin.");
+      toast.success("Your report has been submitted. Our team will review it shortly.");
       setShowReport(false);
       setReportDetails("");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to submit report");
+      toast.error(error?.response?.data?.message || "Could not submit your report. Please try again.");
     }
   };
 
@@ -85,11 +86,10 @@ export default function ProductDetails() {
     if (!product || !product.sellerId) return;
     try {
       const conversation = await createConversation(product.sellerId);
-      // For now we just alert, later we will redirect or open the Chat widget
-      toast.success("Conversation created/found!");
-      // window.dispatchEvent(new CustomEvent('openChat', { detail: conversation.id }));
+      toast.success(`Chat with ${product.seller?.name || "the seller"} is ready!`);
+      window.dispatchEvent(new CustomEvent("openChat", { detail: conversation.id }));
     } catch (error) {
-      toast.error("Failed to initiate chat");
+      toast.error("Could not open chat with the seller. Please try again.");
     }
   };
 
@@ -124,7 +124,7 @@ export default function ProductDetails() {
           {product.description || "No description provided."}
         </p>
 
-        {/* Actions */}
+          {/* Actions */}
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleAddToCart}
@@ -136,21 +136,27 @@ export default function ProductDetails() {
             Add to Cart
           </button>
 
-          <button
-            onClick={handleChatWithSeller}
-            className="flex-1 py-3 px-6 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium flex justify-center items-center gap-2 transition"
-          >
-            <MessageCircle className="w-5 h-5" />
-            Chat with Seller
-          </button>
+          {/* Only show Chat if the logged-in user is NOT the seller */}
+          {user && user.id !== product.sellerId && (
+            <button
+              onClick={handleChatWithSeller}
+              className="flex-1 py-3 px-6 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium flex justify-center items-center gap-2 transition"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Chat with Seller
+            </button>
+          )}
 
-          <button
-            onClick={() => setShowReport(true)}
-            className="p-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg flex items-center justify-center transition"
-            title="Report this product"
-          >
-            <AlertTriangle className="w-5 h-5" />
-          </button>
+          {/* Only show Report if logged in and not the seller */}
+          {user && user.id !== product.sellerId && (
+            <button
+              onClick={() => setShowReport(true)}
+              className="p-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg flex items-center justify-center transition"
+              title="Report this product"
+            >
+              <AlertTriangle className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Reviews Section */}

@@ -6,6 +6,7 @@ export type Product = {
   description?: string;
   price: number;
   imageUrl?: string;
+  thumbnailUrl?: string;
   category?: string;
   stock: number;
   approvalStatus: string;

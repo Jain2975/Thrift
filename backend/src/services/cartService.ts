@@ -35,6 +35,24 @@ export const addToCart = async (
   quantity: number,
 ) => {
   try {
+    // Validate product availability
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    if (product.isDeleted) {
+      throw new Error("This product is no longer available");
+    }
+    if (product.isSuspended) {
+      throw new Error("This product has been suspended and cannot be purchased");
+    }
+    if (product.approvalStatus !== "APPROVED") {
+      throw new Error("This product is not available for purchase");
+    }
+    if (product.stock < quantity) {
+      throw new Error(`Only ${product.stock} item(s) left in stock`);
+    }
+
     const cart = await prisma.cart.upsert({
       where: { userId },
       update: {},
@@ -49,15 +67,17 @@ export const addToCart = async (
     });
 
     if (existingItem) {
+      const newQty = existingItem.quantity + quantity;
+      if (product.stock < newQty) {
+        throw new Error(`Only ${product.stock} item(s) left in stock`);
+      }
       const updatedItem = await prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: {
-          quantity: existingItem.quantity + quantity,
-        },
+        data: { quantity: newQty },
       });
-
       return updatedItem;
     }
+
     const newItem = await prisma.cartItem.create({
       data: {
         cartId: cart.id,
@@ -66,9 +86,9 @@ export const addToCart = async (
       },
     });
     return newItem;
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    throw new Error("Could not add Item to the cart");
+    throw new Error(err.message || "Could not add item to the cart");
   }
 };
 

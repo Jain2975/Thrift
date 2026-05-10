@@ -26,7 +26,7 @@ export default function SellerDashboard() {
       setProducts(prodData.products);
       setOrders(orderData);
     } catch (error) {
-      toast.error("Failed to load seller data");
+      toast.error("Could not load your dashboard data. Please refresh the page.");
     } finally {
       setLoading(false);
     }

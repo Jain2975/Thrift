@@ -81,9 +81,10 @@ const ProductList = () => {
 
   const handleToggleFavorite = async (productId: string, isCurrentlyFavorite: boolean) => {
     if (!user) {
-      toast.info("Please login to add to wishlist");
+      toast.info("Please sign in to save items to your wishlist.");
       return;
     }
+    const productName = products.find(p => p.id === productId)?.name;
     try {
       if (isCurrentlyFavorite) {
         await removeFromWishlist(productId);
@@ -92,7 +93,7 @@ const ProductList = () => {
           next.delete(productId);
           return next;
         });
-        toast.success("Removed from wishlist");
+        toast.success(productName ? `"${productName}" removed from wishlist.` : "Removed from wishlist.");
       } else {
         await addToWishlist(productId);
         setWishlistIds((prev) => {
@@ -100,10 +101,10 @@ const ProductList = () => {
           next.add(productId);
           return next;
         });
-        toast.success("Added to wishlist");
+        toast.success(productName ? `"${productName}" saved to your wishlist!` : "Added to wishlist!");
       }
     } catch (error) {
-      toast.error("Failed to update wishlist");
+      toast.error("Could not update your wishlist. Please try again.");
     }
   };
 

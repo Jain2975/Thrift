@@ -17,6 +17,7 @@ import AdminReports from "./components/admin/AdminReports";
 import AdminOrders from "./components/admin/AdminOrders";
 import ChatWidget from "./components/chat/ChatWidget";
 import SellerDashboard from "./components/seller/SellerDashboard";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
         <Route
           path="/admin/approvals"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminApprovals />
             </ProtectedRoute>
           }
@@ -46,7 +47,7 @@ function App() {
         <Route
           path="/admin/reports"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminReports />
             </ProtectedRoute>
           }
@@ -54,7 +55,7 @@ function App() {
         <Route
           path="/admin/orders"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminOrders />
             </ProtectedRoute>
           }
@@ -62,7 +63,7 @@ function App() {
         <Route
           path="/seller/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN", "SELLER"]}>
               <SellerDashboard />
             </ProtectedRoute>
           }
@@ -106,6 +107,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
+      {/* 404 catch-all */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
     <ChatWidget />
     </>

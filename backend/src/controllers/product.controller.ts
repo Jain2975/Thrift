@@ -40,7 +40,8 @@ export const fetchProducts = async (req: Request, res: Response) => {
     const search = req.query.search as string | undefined;
     const sortBy = req.query.sortBy as string | undefined;
     const includeDeleted = req.query.includeDeleted === "true";
-    const status = "APPROVED";
+    // Only enforce APPROVED filter on public browse; sellers/admins see all statuses for their own use
+    const status: any = includeDeleted ? "ALL" : "APPROVED";
     const data = await getAllProducts({
       page, limit, minPrice, maxPrice, category, search, sortBy, includeDeleted, status,
     });
@@ -111,6 +112,15 @@ export const ImportZipProducts = async (req: AuthRequest, res: Response) => {
 export const RemoveProduct = async (req: AuthRequest, res: Response) => {
   try {
     const productId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+    if (product.sellerId !== req.user.id && req.user.role !== "ADMIN") {
+      return res.status(403).json({ success: false, message: "Forbidden — you can only delete your own products" });
+    }
+
     await deleteProduct(productId);
     return res.status(200).json({ success: true, message: "Product deleted successfully" });
   } catch (error) {

@@ -53,10 +53,9 @@ const CartPage = () => {
   const addhandleUpdateCartItem = async (itemId: string, quantity: number) => {
     try {
       const updatedItem = await UpdateCartItem(itemId, quantity);
-      toast("Item Quantity Increased");
+      toast.success("Quantity increased.");
       setCart((prevCart) => {
         if (!prevCart) return prevCart;
-
         return {
           ...prevCart,
           items: prevCart.items.map((item) =>
@@ -67,7 +66,7 @@ const CartPage = () => {
         };
       });
     } catch (error) {
-      toast.error("Error updating item quantity");
+      toast.error("Could not update quantity. Please try again.");
       console.error("Error updating cart item", error);
     }
   };
@@ -79,10 +78,9 @@ const CartPage = () => {
         return;
       }
       const updatedItem = await UpdateCartItem(itemId, quantity);
-      toast("Item Quantity decreased");
+      toast.success("Quantity decreased.");
       setCart((prevCart) => {
         if (!prevCart) return prevCart;
-
         return {
           ...prevCart,
           items: prevCart.items.map((item) =>
@@ -93,23 +91,25 @@ const CartPage = () => {
         };
       });
     } catch (error) {
+      toast.error("Could not update quantity. Please try again.");
       console.error("Error updating cart item", error);
     }
   };
 
   const handleDeleteCartItem = async (itemId: string) => {
+    const itemName = cart?.items.find(i => i.id === itemId)?.product?.name;
     try {
       await DeleteCartItem(itemId);
-      toast.error("Item deleted successfully");
+      toast.success(itemName ? `"${itemName}" removed from cart.` : "Item removed from cart.");
       setCart((prev) => {
         if (!prev) return prev;
-
         return {
           ...prev,
           items: prev.items.filter((item) => item.id !== itemId),
         };
       });
     } catch (err) {
+      toast.error("Could not remove the item. Please try again.");
       console.error(err);
     }
   };
@@ -117,9 +117,10 @@ const CartPage = () => {
   const handleDeleteCart = async () => {
     try {
       await ClearCart();
-      setCart({ ...cart, items: [] });
-      console.log("Cart cleared ");
+      setCart((prev) => prev ? { ...prev, items: [] } : prev);
+      toast.success("Your cart has been cleared.");
     } catch (error) {
+      toast.error("Could not clear your cart. Please try again.");
       console.error("Error deleting cart", error);
     }
   };
@@ -142,17 +143,18 @@ const CartPage = () => {
       //Show success animation
       setProcessingPayment(false);
       setTransactionSuccess(true);
-      toast.success("Transaction Completed Successfully!");
+      toast.success("Payment successful! Your order has been placed.");
 
       //Close modal and clear cart off-screen after a slight delay
       setTimeout(() => {
         setShowPaymentModal(false);
         setTransactionSuccess(false);
-        setCart({ ...cart, items: [] });
+        setCart((prev) => prev ? { ...prev, items: [] } : prev);
       }, 2500);
-    } catch (error) {
+    } catch (error: any) {
+      const msg = error?.response?.data?.error || error?.message;
       console.error("Payment processing failed", error);
-      toast.error("Failed to process order.");
+      toast.error(msg || "Payment failed. Please check your cart and try again.");
       setProcessingPayment(false);
     }
   };

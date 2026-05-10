@@ -22,10 +22,10 @@ const ProductCard = ({
   const handleAddToCart = async () => {
     try {
       await AddItemToCart(product.id, 1);
-      console.log("Added Product To Card");
-      toast.success("Item Added to Cart");
-    } catch (err) {
-      console.error("Failed To Add to Cart", err);
+      toast.success(`"${product.name}" added to your cart!`);
+    } catch (err: any) {
+      const msg = err?.response?.data?.error;
+      toast.error(msg || `Could not add "${product.name}" to cart.`);
     }
   };
 
@@ -33,9 +33,10 @@ const ProductCard = ({
     try {
       await deleteProduct(product.id);
       onUpdate({ ...product, isDeleted: true });
-      toast.success("Product Deleted Successfully");
+      toast.success(`"${product.name}" has been removed from listings.`);
     } catch (err) {
       console.error("Failed To Delete Product", err);
+      toast.error(`Could not remove "${product.name}". Please try again.`);
     }
   };
 
@@ -43,9 +44,10 @@ const ProductCard = ({
     try {
       await restoreProduct(product.id);
       onUpdate({ ...product, isDeleted: false });
-      toast.success("Product Restored Successfully");
+      toast.success(`"${product.name}" has been restored and is live again.`);
     } catch (err) {
       console.error("Failed To Restore Product", err);
+      toast.error(`Could not restore "${product.name}". Please try again.`);
     }
   };
 
@@ -114,7 +116,7 @@ const ProductCard = ({
           </Link>
         </div>
 
-        {user && (user.role === 'ADMIN' || user.role === 'SELLER') && (
+        {user && (user.role === 'ADMIN' || (user.role === 'SELLER' && product.sellerId === user.id)) && (
           !product.isDeleted ? (
             <button
               onClick={handleDelete}

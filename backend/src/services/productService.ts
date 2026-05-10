@@ -1,10 +1,11 @@
-import path from "path/win32";
+import path from "path";
 import { prisma } from "../db/prisma.ts";
 import { extractZip } from "../utils/zipExtractor.ts";
 import fs from "fs";
-import csv from "csv-parser";
 import { v4 as uuidv4 } from "uuid";
 import { parseProductCsv } from "../utils/csvProductParser.ts";
+import { ProductStatus } from "../../generated/prisma";
+import { Decimal } from "@prisma/client/runtime/client";
 type GetProductOptions = {
   page?: number;
   limit?: number;
@@ -33,6 +34,7 @@ export const getAllProducts = async ({
     const where: any = {};
     if (!includeDeleted) {
       where.isDeleted = false;
+      where.isSuspended = false;
     }
 
     // Status filter (ALL = no filter)
@@ -254,10 +256,13 @@ export const updateProduct = async (
   data: {
     name?: string;
     description?: string;
-    price?: number;
+    price?: Decimal | number;
     stock?: number;
     imageUrl?: string;
+    thumbnailUrl?: string | null;
+    imageHash?: string | null;
     category?: string;
+    approvalStatus?: ProductStatus;
   }
 ) => {
   return prisma.product.update({

@@ -23,23 +23,27 @@ export default function AdminReports() {
   };
 
   const handleDismiss = async (id: string) => {
+    const report = reports.find((r: any) => r.id === id);
+    const productName = report?.product?.name || "the product";
     try {
       await api.post(`/reports/admin/${id}/dismiss`);
-      toast.success("Report dismissed");
+      toast.success(`Report on "${productName}" has been dismissed.`);
       fetchReports();
     } catch (error) {
-      toast.error("Failed to dismiss report");
+      toast.error("Could not dismiss this report. Please try again.");
     }
   };
 
   const handleSuspend = async (id: string) => {
-    if (!window.confirm("Are you sure you want to suspend this product?")) return;
+    const report = reports.find((r: any) => r.id === id);
+    const productName = report?.product?.name || "the product";
+    if (!window.confirm(`Are you sure you want to suspend "${productName}"? It will be hidden from all buyers.`)) return;
     try {
       await api.post(`/reports/admin/${id}/suspend`);
-      toast.success("Product suspended");
+      toast.success(`"${productName}" has been suspended and removed from the store.`);
       fetchReports();
     } catch (error) {
-      toast.error("Failed to suspend product");
+      toast.error("Could not suspend this product. Please try again.");
     }
   };
 

@@ -25,10 +25,10 @@ export default function AdminOrders() {
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
       await api.patch(`/order/admin/${id}/status`, { status: newStatus });
-      toast.success("Order status updated");
+      toast.success(`Order status updated to "${newStatus}".`);
       fetchOrders();
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error("Failed to update the order status. Please try again.");
     }
   };
 

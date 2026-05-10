@@ -27,8 +27,8 @@ export const AddToCart = async (req: AuthRequest, res: Response) => {
     const { productId, quantity } = req.body;
     const item = await addToCart(userId, productId, quantity);
     res.status(201).json(item);
-  } catch (error) {
-    res.status(400).json({ error: "Error adding item to cart" });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message || "Error adding item to cart" });
   }
 };
 

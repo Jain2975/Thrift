@@ -33,10 +33,14 @@ export default function EditProductModal({ product, onClose, onSuccess }: EditPr
       }
 
       await updateProduct(product.id, formData);
-      toast.success("Product updated successfully!");
+      if (image) {
+        toast.success(`"${name}" updated! New image will be reviewed by admin before going live.`);
+      } else {
+        toast.success(`"${name}" has been updated successfully.`);
+      }
       onSuccess();
     } catch (error) {
-      toast.error("Failed to update product");
+      toast.error(`Could not save changes to "${name}". Please try again.`);
     } finally {
       setLoading(false);
     }

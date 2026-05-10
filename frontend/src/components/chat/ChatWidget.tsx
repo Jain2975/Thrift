@@ -11,6 +11,7 @@ export default function ChatWidget() {
   
   const [conversations, setConversations] = useState<any[]>([]);
   const [activeConversation, setActiveConversation] = useState<any | null>(null);
+  const [pendingConvId, setPendingConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState("");
 
@@ -35,10 +36,30 @@ export default function ChatWidget() {
 
     fetchConversations();
 
+    // Listen for openChat event dispatched by ProductDetails
+    const handleOpenChat = (e: Event) => {
+      const conversationId = (e as CustomEvent).detail as string;
+      setIsOpen(true);
+      setPendingConvId(conversationId);
+      fetchConversations();
+    };
+    window.addEventListener("openChat", handleOpenChat);
+
     return () => {
       newSocket.disconnect();
+      window.removeEventListener("openChat", handleOpenChat);
     };
   }, [user]);
+
+  useEffect(() => {
+    if (pendingConvId && conversations.length > 0) {
+      const conv = conversations.find((c: any) => c.id === pendingConvId);
+      if (conv) {
+        setActiveConversation(conv);
+        setPendingConvId(null);
+      }
+    }
+  }, [conversations, pendingConvId]);
 
   useEffect(() => {
     if (activeConversation) {
